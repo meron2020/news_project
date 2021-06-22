@@ -1,5 +1,6 @@
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
+import pika
 
 
 class YnetCrawler:
@@ -19,7 +20,19 @@ class YnetCrawler:
                            'https://www.ynet.co.il/news/category/13547',
                            'https://www.ynet.co.il/news/category/9500']
         self.check_if_links_change()
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters('localhost')
+        )
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue='news urls', durable=True)
+        for link in self.root_links:
+            self.channel.basic_publish(
+                exchange='',
+                routing_key='news urls',
+                body=link,
+                properties=pika.BasicProperties(delivery_mode=2)
 
+            )
 
     @classmethod
     def get_link(cls, url):
