@@ -1,11 +1,10 @@
-from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
-import pika
+from basic_crawler import BasicCrawler
 
 
-class YnetCrawler:
+class YnetCrawler(BasicCrawler):
     def __init__(self):
-        self.page_html = self.get_link("https://www.ynet.co.il/news")
+        super(YnetCrawler, self).__init__("https://www.ynet.co.il/news")
         self.root_links = ['https://www.ynet.co.il/news/category/344',
                            'https://www.ynet.co.il/news/category/315',
                            'https://www.ynet.co.il/news/category/317',
@@ -19,40 +18,13 @@ class YnetCrawler:
                            'https://www.ynet.co.il/news/category/4502',
                            'https://www.ynet.co.il/news/category/13547',
                            'https://www.ynet.co.il/news/category/9500']
-        self.check_if_links_change()
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters('localhost')
-        )
-        self.channel = self.connection.channel()
-        self.channel.queue_declare(queue='news urls', durable=True)
-        for link in self.root_links:
-            self.channel.basic_publish(
-                exchange='',
-                routing_key='news urls',
-                body=link,
-                properties=pika.BasicProperties(delivery_mode=2)
-
-            )
-
-    @classmethod
-    def get_link(cls, url):
-        base_url = Request(url)
-        page = urlopen(base_url)
-        page_html = page.read().decode('utf-8')
-        return page_html
+        self.check_if_links_change(self.find_news_links)
+        self.send_links_to_queue(self.root_links)
 
     @classmethod
     def find_navigation_div(cls, page_html):
         parser = BeautifulSoup(page_html, "html.parser")
         return parser.find_all("div", {"class": "categorySubNavigation"})
-
-    def check_if_links_change(self):
-        news_links = self.find_news_links()
-        if not news_links == self.root_links:
-            self.root_links = news_links
-
-        else:
-            pass
 
     def find_news_links(self):
         links = []

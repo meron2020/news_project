@@ -19,4 +19,4 @@ class YnetWorker(BasicWorker):
 
 
 worker = YnetWorker("https://www.ynet.co.il/news/article/ryFma1113u#autoplay")
-worker.parse()
+print(worker.parse())
