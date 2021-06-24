@@ -1,3 +1,4 @@
+import requests
 from bs4 import BeautifulSoup
 from basic_crawler import BasicCrawler
 
@@ -18,15 +19,17 @@ class YnetCrawler(BasicCrawler):
                            'https://www.ynet.co.il/news/category/4502',
                            'https://www.ynet.co.il/news/category/13547',
                            'https://www.ynet.co.il/news/category/9500']
-        self.check_if_links_change(self.find_news_links)
-        self.send_links_to_queue(self.root_links)
+        self.news_links = []
+        self.check_if_links_change(self.find_news_category)
+        self.find_all_news_links()
+        self.send_links_to_queue(self.news_links)
 
     @classmethod
     def find_navigation_div(cls, page_html):
         parser = BeautifulSoup(page_html, "html.parser")
         return parser.find_all("div", {"class": "categorySubNavigation"})
 
-    def find_news_links(self):
+    def find_news_category(self):
         links = []
         div_tag = self.find_navigation_div(self.page_html)
         if len(div_tag) > 0:
@@ -42,6 +45,21 @@ class YnetCrawler(BasicCrawler):
                     pass
         return links
 
+    def find_all_news_links(self):
+        for link in self.root_links:
+            html = requests.get(link).text
+            soup = BeautifulSoup(html, 'html.parser')
+            slot_title_divs = soup.find_all("div", {"class": "slotView"})
+            for news_link_div in slot_title_divs:
+                news_span = news_link_div.span
+                try:
+                    news_link = news_span.a['href']
+                    self.news_links.append(news_link)
+                except Exception:
+                    pass
+
+
+
 
 crawler = YnetCrawler()
-print(crawler.find_news_links())
+crawler.find_all_news_links()
