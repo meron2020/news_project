@@ -1,15 +1,12 @@
-from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 from basic_crawler import BasicCrawler
 
 
 class MaarivCrawler(BasicCrawler):
-    def __init__(self):
+    def __init__(self, connection_parameter):
         super(MaarivCrawler, self).__init__("https://www.maariv.co.il/news")
         self.news_links = []
         self.soup = BeautifulSoup(self.page_html, "html.parser")
-        self.set_news_links()
-        self.send_links_to_queue(self.news_links)
 
     def find_big_item_links(self):
         news_links = []
@@ -27,13 +24,10 @@ class MaarivCrawler(BasicCrawler):
             news_links.append(news_link)
         return news_links
 
-    def set_news_links(self):
+    def return_news_links(self):
         big_links = self.find_big_item_links()
         small_links = self.find_small_item_links()
-        self.news_links.append(big_links)
-        self.news_links.append(small_links)
+        self.news_links.extend(big_links)
+        self.news_links.extend(small_links)
 
-        print(self.news_links)
-
-crawler = MaarivCrawler()
-crawler.set_news_links()
+        return self.news_links

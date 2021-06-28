@@ -4,7 +4,7 @@ from basic_crawler import BasicCrawler
 
 
 class YnetCrawler(BasicCrawler):
-    def __init__(self):
+    def __init__(self, connection_parameter):
         super(YnetCrawler, self).__init__("https://www.ynet.co.il/news")
         self.root_links = ['https://www.ynet.co.il/news/category/344',
                            'https://www.ynet.co.il/news/category/315',
@@ -22,7 +22,6 @@ class YnetCrawler(BasicCrawler):
         self.news_links = []
         self.check_if_links_change(self.find_news_category)
         self.find_all_news_links()
-        self.send_links_to_queue(self.news_links)
 
     @classmethod
     def find_navigation_div(cls, page_html):
@@ -58,8 +57,6 @@ class YnetCrawler(BasicCrawler):
                 except Exception:
                     pass
 
+            return self.news_links
 
 
-
-crawler = YnetCrawler()
-crawler.find_all_news_links()
