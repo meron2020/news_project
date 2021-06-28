@@ -5,7 +5,6 @@ from basic_worker import BasicWorker
 class YnetWorker(BasicWorker):
     def __init__(self, url):
         super().__init__(url)
-        self.page_html = self.download_link()
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
@@ -18,5 +17,5 @@ class YnetWorker(BasicWorker):
         return full_text
 
 
-worker = YnetWorker("https://www.ynet.co.il/news/article/ryFma1113u#autoplay")
+worker = YnetWorker("https://www.ynet.co.il/news/article/HJ9PLxXnu#autoplay")
 print(worker.parse())
