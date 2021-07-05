@@ -23,6 +23,8 @@ class HaaretzCrawler(BasicCrawler):
             except Exception:
                 pass
 
+        print(self.news_links)
+
 
 crawler = HaaretzCrawler()
 crawler.find_all_news_links()
