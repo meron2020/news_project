@@ -1,6 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
-import pika
 
 
 class BasicWorker:
@@ -12,6 +10,6 @@ class BasicWorker:
         r = requests.get(self.url)
         return r.text
 
-    @classmethod
-    def print_acknowledgement(cls, newspapaer):
-        print("{} url received.".format(newspapaer))
+    # @classmethod
+    # def print_acknowledgement(cls, newspapaer):
+    #     print(" [x] {} url received.".format(newspapaer))

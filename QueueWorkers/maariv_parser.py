@@ -17,8 +17,9 @@ class MaarivWorker(BasicWorker):
         for text in texts[0]:
             full_text += text.get_text()
 
-        print(full_text)
+        full_text_list = full_text.split()
+        for text in full_text_list:
+            text = text[::-1]
+        full_text = ' '.join(full_text_list)
 
-
-worker = MaarivWorker("https://www.maariv.co.il/news/politics/Article-848853")
-worker.parse()
+        return full_text

@@ -16,6 +16,3 @@ class YnetWorker(BasicWorker):
         full_text = ''.join(texts)
         return full_text
 
-
-worker = YnetWorker("https://www.ynet.co.il/news/article/HJ9PLxXnu#autoplay")
-print(worker.parse())

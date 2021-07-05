@@ -8,9 +8,6 @@ class IsraelHayomWorker(BasicWorker):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
-        text_div = soup.find("div", {"class": "text-content"})
-        return text_div.text
+        text_div = soup.body.find("div", {"class": "text-content"})
+        return text_div.get_text()
 
-
-worker = IsraelHayomWorker("https://www.israelhayom.co.il/news/geopolitics/article/2564010/")
-print(worker.parse())
