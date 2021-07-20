@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from basic_crawler import BasicCrawler
+from .basic_crawler import BasicCrawler
 
 
 class N12Crawler(BasicCrawler):

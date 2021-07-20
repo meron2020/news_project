@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from basic_crawler import BasicCrawler
+from .basic_crawler import BasicCrawler
 
 
 class MaarivCrawler(BasicCrawler):

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from basic_crawler import BasicCrawler
+from .basic_crawler import BasicCrawler
 
 
 class YnetCrawler(BasicCrawler):
@@ -52,9 +52,9 @@ class YnetCrawler(BasicCrawler):
                 except Exception:
                     pass
 
-        print(self.news_links)
-        print(len(self.news_links))
+        # print(self.news_links)
+        # print(len(self.news_links))
         return self.news_links
 
 
-YnetCrawler()
+# YnetCrawler()

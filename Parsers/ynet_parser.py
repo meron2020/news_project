@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from basic_worker import BasicWorker
+from .basic_worker import BasicWorker
 
 
 class YnetWorker(BasicWorker):
@@ -15,4 +15,3 @@ class YnetWorker(BasicWorker):
         texts.pop(-1)
         full_text = ''.join(texts)
         return full_text
-

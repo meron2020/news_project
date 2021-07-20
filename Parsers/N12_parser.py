@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from basic_worker import BasicWorker
+from .basic_worker import BasicWorker
 
 
 class N12Worker(BasicWorker):

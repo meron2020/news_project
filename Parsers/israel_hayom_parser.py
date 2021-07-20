@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from basic_worker import BasicWorker
+from .basic_worker import BasicWorker
 
 
 class IsraelHayomWorker(BasicWorker):
@@ -10,4 +10,3 @@ class IsraelHayomWorker(BasicWorker):
         soup = BeautifulSoup(self.page_html, "html.parser")
         text_div = soup.body.find("div", {"class": "text-content"})
         return text_div.get_text()
-
