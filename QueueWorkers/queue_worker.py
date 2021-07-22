@@ -1,57 +1,59 @@
-from Parsers.israel_hayom_parser import IsraelHayomWorker
 from Parsers.ynet_parser import YnetWorker
 from Parsers.maariv_parser import MaarivWorker
 from Parsers.N12_parser import N12Worker
+from Parsers.israel_hayom_parser import IsraelHayomWorker
 import pika
-from database_handler import DatabaseHandler
-
-handler = DatabaseHandler()
-
-news_links = []
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-
-channel = connection.channel()
-channel.exchange_declare(exchange='news_urls', exchange_type="direct", durable=True)
-result = channel.queue_declare(queue='', exclusive=True)
-queue_name = result.method.queue
-
-counter = 0
-
-routing_keys = []
-for i in range(4):
-    routing_keys.append("routing_" + str(i))
-
-for routing_key in routing_keys:
-    channel.queue_bind(exchange='news_urls', queue=queue_name, routing_key=routing_key)
+from DatabaseHandlers.database_publisher import DatabasePublisher
+import json
 
 
-def callback(ch, method, properties, body):
-    body = body.decode("utf-8")
-    try:
-        if "ynet" in body:
-            worker = YnetWorker(body)
-            newspaper = "ynet"
-        elif "maariv" in body:
-            worker = MaarivWorker(body)
-            newspaper = "maariv"
-        elif "mako" in body:
-            worker = N12Worker(body)
-            newspaper = "mako"
-        else:
-            worker = IsraelHayomWorker(body)
-            newspaper = "israel hayom"
+class QueueWorker:
+    def __init__(self):
+        self.DB_queue_handler = DatabasePublisher()
 
-        full_text = worker.parse()
-        full_text = full_text.replace("'", "")
-        handler.insert_article(newspaper, body, full_text)
-#        worker.print_acknowledgement(newspaper)
+        self.news_links = []
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
-    except Exception:
-        print(" [-] Error in parsing")
+        self.channel = self.connection.channel()
+        self.result = self.channel.queue_declare(queue='url_queue', durable=True)
 
+    def callback(self, ch, method, properties, body):
+        body = body.decode("utf-8")
+        body = json.loads(body)
+        if type(body) == int:
+            self.DB_queue_handler.send_article_amount(body)
+            return
 
-channel.basic_consume(
-    queue=queue_name, on_message_callback=callback, auto_ack=True
-)
+        url, topic = body[0], body[1]
+        try:
+            if "ynet" in url:
+                worker = YnetWorker(url)
+                newspaper = "ynet"
+            elif "maariv" in url:
+                worker = MaarivWorker(url)
+                newspaper = "maariv"
+            elif "mako" in url:
+                worker = N12Worker(url)
+                newspaper = "mako"
+            else:
+                worker = IsraelHayomWorker(url)
+                newspaper = "israel hayom"
 
-channel.start_consuming()
+            full_text = worker.parse()
+            full_text = full_text.replace("'", "")
+            self.DB_queue_handler.insert_data_to_DB_queue(newspaper, url, full_text, topic)
+        #       worker.print_acknowledgement(newspaper)
+
+        except Exception as e:
+            self.DB_queue_handler.notify_handler_of_error()
+            # print(" [-] Error in parsing - {}".format(e))
+
+    def start_consumption(self):
+        self.channel.basic_consume(
+            queue='url_queue', on_message_callback=self.callback, auto_ack=True
+        )
+
+        self.channel.start_consuming()
+
+# worker = QueueWorker()
+# worker.start_consumption()
