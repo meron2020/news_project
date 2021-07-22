@@ -1,7 +1,7 @@
-from israel_hayom_parser import IsraelHayomWorker
-from ynet_parser import YnetWorker
-from maariv_parser import MaarivWorker
-from N12_parser import N12Worker
+from Parsers.israel_hayom_parser import IsraelHayomWorker
+from Parsers.ynet_parser import YnetWorker
+from Parsers.maariv_parser import MaarivWorker
+from Parsers.N12_parser import N12Worker
 import pika
 from database_handler import DatabaseHandler
 
