@@ -49,7 +49,6 @@ class MaarivCrawler(BasicCrawler):
         # print(len(self.news_links))
         return self.news_links
 
-
 # crawler = MaarivCrawler()
 # # crawler.find_big_item_links()
 # crawler.return_news_links()
