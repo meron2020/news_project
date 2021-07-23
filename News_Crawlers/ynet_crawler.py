@@ -56,5 +56,4 @@ class YnetCrawler(BasicCrawler):
         # print(len(self.news_links))
         return self.news_links
 
-
 # YnetCrawler()
