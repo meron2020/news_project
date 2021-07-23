@@ -47,7 +47,7 @@ class DatabaseHandler:
 
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
-            # print("Failed to insert data into sqlite table", error)
+            print("Failed to insert data into sqlite table", error)
 
     def find_articles_inserted_num(self):
         sqlite_insert_query = "SELECT COUNT(*) FROM articles"
@@ -84,7 +84,7 @@ class DatabaseHandler:
         try:
             sqlite_insert_query = """UPDATE {}
                 SET cluster_id = {}
-                WHERE id = {};""".format(self.table_name, str(cluster_id), _id)
+                WHERE id = {};""".format(self.table_name, str('"'+cluster_id+'"'), _id)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             print(" [+] Inserted cluster id successfully.")
