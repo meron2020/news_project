@@ -91,7 +91,6 @@ class DatabaseHandler:
                 WHERE id = {};""".format(self.table_name, str('"' + cluster_id + '"'), _id)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
-            print(" [+] Inserted cluster id successfully.")
         except sqlite3.Error as error:
             print(" [-] Failed to insert cluster id.", error)
 
