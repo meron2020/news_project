@@ -36,8 +36,9 @@ class DatabaseHandler:
             self.connection.commit()
             self.articles_inserted_num += 1
             if self.articles_inserted_num % 50 == 0:
-                print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
-                print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
+                # print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
+                # print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
+                self.find_each_newspaper_num()
 
             if self.article_amount == self.articles_sent:
                 print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
@@ -58,10 +59,17 @@ class DatabaseHandler:
         return cur_result[0]
 
     def find_each_newspaper_num(self):
-        query = "SELECT COUNT(*) FROM articles GROUP BY newspaper"
+        newspaper_dict = {'ynet': 0, 'maariv': 0, 'israel hayom': 0, 'mako': 0}
+        query = "SELECT * FROM articles"
         self.cursor.execute(query)
         cur_result = self.cursor.fetchall()
-        print("{} - {}".format(cur_result[0], cur_result[1]))
+        for result in cur_result:
+            for newspaper in newspaper_dict.keys():
+                if newspaper in result[1]:
+                    newspaper_dict[newspaper] += 1
+        for newspaper in newspaper_dict:
+            print("{} - {}".format(newspaper, newspaper_dict[newspaper]))
+
 
     def callback(self, ch, method, properties, body):
         body = body.decode("utf-8")
@@ -102,5 +110,3 @@ class DatabaseHandler:
             number_list.remove(int(cluster_ids[-1]))
         cluster_ids_str = ",".join(cluster_ids)
         return cluster_ids_str
-
-
