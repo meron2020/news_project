@@ -1,6 +1,7 @@
 import sqlite3
 import pika
 import json
+import random
 
 
 class DatabaseHandler:
@@ -48,6 +49,7 @@ class DatabaseHandler:
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
+        return self.cursor.lastrowid
 
     def find_articles_inserted_num(self):
         sqlite_insert_query = "SELECT COUNT(*) FROM articles"
@@ -70,7 +72,9 @@ class DatabaseHandler:
         elif type(body) == int:
             self.article_amount = body
         else:
-            self.insert_article(body[0], body[1], body[2], body[3])
+            _id = self.insert_article(body[0], body[1], body[2], body[3])
+            cluster_id = self.random_clustering()
+            self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
 
     def start_consumption(self):
@@ -84,9 +88,20 @@ class DatabaseHandler:
         try:
             sqlite_insert_query = """UPDATE {}
                 SET cluster_id = {}
-                WHERE id = {};""".format(self.table_name, str('"'+cluster_id+'"'), _id)
+                WHERE id = {};""".format(self.table_name, str('"' + cluster_id + '"'), _id)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             print(" [+] Inserted cluster id successfully.")
         except sqlite3.Error as error:
             print(" [-] Failed to insert cluster id.", error)
+
+    def random_clustering(self):
+        number_list = list(range(1, 5))
+        cluster_ids = []
+        for i in range(3):
+            cluster_ids.append(str(random.choice(number_list)))
+            number_list.remove(int(cluster_ids[-1]))
+        cluster_ids_str = ",".join(cluster_ids)
+        return cluster_ids_str
+
+
