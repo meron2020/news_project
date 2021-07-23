@@ -5,6 +5,9 @@ from Parsers.maariv_parser import MaarivWorker
 from DatabaseHandlers.database_handler import DatabaseHandler
 import sqlite3
 import random
+import os
+
+os.remove("mini_nlp.db")
 
 
 def create_db():
