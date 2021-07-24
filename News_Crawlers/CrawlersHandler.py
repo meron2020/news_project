@@ -1,7 +1,7 @@
 from .ynet_crawler import YnetCrawler
 from .maariv_crawler import MaarivCrawler
 from .N12_crawler import N12Crawler
-from .israel_hayom_crawler import IsraelHayomCrawler
+from .walla_crawler import WallaCrawler
 import pika
 import json
 
@@ -12,7 +12,7 @@ class CrawlersHandler:
         self.ynet_crawler = YnetCrawler()
         self.maariv_crawler = MaarivCrawler()
         self.n12_crawler = N12Crawler()
-        self.israelhayom_crawler = IsraelHayomCrawler()
+        self.walla_crawler = WallaCrawler()
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=connection_parameter)
         )
@@ -68,8 +68,8 @@ class CrawlersHandler:
         self.news_links.extend(maariv_links)
         n12_links = self.n12_crawler.find_news_links()
         self.news_links.extend(n12_links)
-        israel_hayom_links = self.israelhayom_crawler.parse_and_download()
-        self.news_links.extend(israel_hayom_links)
+        walla_links = self.walla_crawler.find_all_links()
+        self.news_links.extend(walla_links)
 
 
 # handler = CrawlersHandler()
