@@ -16,26 +16,55 @@ class YnetCrawler(BasicCrawler):
                                 'https://www.ynet.co.il/news/category/192': 'חדשות בעולם'}
         self.news_links = []
         self.check_if_links_change(self.find_news_category)
-        self.find_links_in_category_pages()
+        self.find_all_links()
 
-    def find_links_in_category_pages(self):
+    def find_all_links(self):
         category_lists = ["https://www.ynet.co.il/news/category/185",
                           "https://www.ynet.co.il/news/category/187"]
+        linked_lists = []
         for link in category_lists:
             html = self.get_link(link)
             soup = BeautifulSoup(html, "html.parser")
             article_tabs_div = soup.find_all("div", {"class": "MultiArticleComponenta ArticleHeadlinesAuto"})
-            all_page_links = []
+            all_page_link_lists = []
             for div in article_tabs_div:
+                topic = div.find("div", {"class": "TabComponenta multiArticleTab"}).find("div",
+                                                                                         {
+                                                                                             "class": "rightTitleText"}).get_text()
                 slots = div.find("div", {"class": "slotsContent"})
                 div_links = slots.find_all("a")
                 for link in div_links:
                     if "article" in link['href']:
-                        all_page_links.append(link['href'])
+                        all_page_link_lists.append([link['href'], topic])
 
-            all_page_links = list(dict.fromkeys(all_page_links))
-            for link in all_page_links:
-                print(link)
+            # all_page_links = list(dict.fromkeys(all_page_links))
+            all_page_link_lists = all_page_link_lists[0::3]
+            for link_list in all_page_link_lists:
+                if link_list[1] == "רווחה וחברה" or link_list[1] == 'מזג אוויר':
+                    pass
+                else:
+                    linked_lists.append(link_list)
+
+        world_links_list = self.find_world_news()
+        linked_lists.extend(world_links_list)
+
+        print(linked_lists)
+
+    def find_world_news(self):
+        world_links_html = self.get_link("https://www.ynet.co.il/news/category/192")
+        soup = BeautifulSoup(world_links_html, "html.parser")
+        slot_content_div = soup.find("div", {"class", "MultiArticleComponenta ArticleHeadlinesAuto"}).find_all("div", {"class": "slotTitle"})
+        whole_links_list = []
+        for div in slot_content_div:
+            whole_links_list.append(div.find("a"))
+        five_links = whole_links_list[:5]
+        world_links = []
+        for link in five_links:
+            world_links.append([link['href'], "חדשות בעולם"])
+
+        return world_links
+
+
 
     @classmethod
     def find_navigation_div(cls, page_html):
