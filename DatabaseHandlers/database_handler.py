@@ -81,8 +81,8 @@ class DatabaseHandler:
             self.article_amount = body
         else:
             _id = self.insert_article(body[0], body[1], body[2], body[3])
-            cluster_id = self.random_clustering()
-            self.update_cluster_id(_id, cluster_id)
+            # cluster_id = self.random_clustering()
+            # self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
 
     def start_consumption(self):
