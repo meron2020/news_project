@@ -1,7 +1,7 @@
 from Parsers.ynet_parser import YnetWorker
 from Parsers.maariv_parser import MaarivWorker
 from Parsers.N12_parser import N12Worker
-from Parsers.israel_hayom_parser import IsraelHayomWorker
+from Parsers.walla_worker import WallaWorker
 import pika
 from DatabaseHandlers.database_publisher import DatabasePublisher
 import json
@@ -24,7 +24,10 @@ class QueueWorker:
             self.DB_queue_handler.send_article_amount(body)
             return
 
-        url, topic = body[0], body[1]
+        try:
+            url, topic = body[0], body[1]
+        except Exception:
+            url = body[0]
         try:
             if "ynet" in url:
                 worker = YnetWorker(url)
@@ -36,10 +39,12 @@ class QueueWorker:
                 worker = N12Worker(url)
                 newspaper = "mako"
             else:
-                worker = IsraelHayomWorker(url)
-                newspaper = "israel hayom"
-
-            full_text = worker.parse()
+                worker = WallaWorker(url)
+                newspaper = "walla"
+            try:
+                full_text, topic = worker.parse()
+            except TypeError:
+                full_text = worker.parse()
             full_text = full_text.replace("'", "")
             self.DB_queue_handler.insert_data_to_DB_queue(newspaper, url, full_text, topic)
         #       worker.print_acknowledgement(newspaper)
