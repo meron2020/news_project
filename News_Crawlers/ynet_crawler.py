@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .basic_crawler import BasicCrawler
+from basic_crawler import BasicCrawler
 
 
 class YnetCrawler(BasicCrawler):
@@ -16,7 +16,26 @@ class YnetCrawler(BasicCrawler):
                                 'https://www.ynet.co.il/news/category/192': 'חדשות בעולם'}
         self.news_links = []
         self.check_if_links_change(self.find_news_category)
-        self.find_all_news_links()
+        self.find_links_in_category_pages()
+
+    def find_links_in_category_pages(self):
+        category_lists = ["https://www.ynet.co.il/news/category/185",
+                          "https://www.ynet.co.il/news/category/187"]
+        for link in category_lists:
+            html = self.get_link(link)
+            soup = BeautifulSoup(html, "html.parser")
+            article_tabs_div = soup.find_all("div", {"class": "MultiArticleComponenta ArticleHeadlinesAuto"})
+            all_page_links = []
+            for div in article_tabs_div:
+                slots = div.find("div", {"class": "slotsContent"})
+                div_links = slots.find_all("a")
+                for link in div_links:
+                    if "article" in link['href']:
+                        all_page_links.append(link['href'])
+
+            all_page_links = list(dict.fromkeys(all_page_links))
+            for link in all_page_links:
+                print(link)
 
     @classmethod
     def find_navigation_div(cls, page_html):
@@ -56,4 +75,5 @@ class YnetCrawler(BasicCrawler):
         # print(len(self.news_links))
         return self.news_links
 
-# YnetCrawler()
+
+YnetCrawler()
