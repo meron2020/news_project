@@ -1,7 +1,7 @@
 import requests
 
 
-class BasicWorker:
+class BasicParser:
     def __init__(self, url):
         self.url = url
         self.page_html = self.download_link()

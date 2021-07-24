@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup
-from .basic_worker import BasicWorker
+from .basic_worker import BasicParser
 
 
-class IsraelHayomWorker(BasicWorker):
+class IsraelHayomParser(BasicParser):
     def __init__(self, url):
-        super(IsraelHayomWorker, self).__init__(url)
+        super(IsraelHayomParser, self).__init__(url)
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")

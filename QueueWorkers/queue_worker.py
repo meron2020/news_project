@@ -1,7 +1,7 @@
-from Parsers.ynet_parser import YnetWorker
-from Parsers.maariv_parser import MaarivWorker
-from Parsers.N12_parser import N12Worker
-from Parsers.walla_worker import WallaWorker
+from Parsers.ynet_parser import YnetParser
+from Parsers.maariv_parser import MaarivParser
+from Parsers.N12_parser import N12Parser
+from Parsers.walla_worker import WallaParser
 import pika
 from DatabaseHandlers.database_publisher import DatabasePublisher
 import json
@@ -30,16 +30,16 @@ class QueueWorker:
             url = body[0]
         try:
             if "ynet" in url:
-                worker = YnetWorker(url)
+                worker = YnetParser(url)
                 newspaper = "ynet"
             elif "maariv" in url:
-                worker = MaarivWorker(url)
+                worker = MaarivParser(url)
                 newspaper = "maariv"
             elif "mako" in url:
-                worker = N12Worker(url)
+                worker = N12Parser(url)
                 newspaper = "mako"
             else:
-                worker = WallaWorker(url)
+                worker = WallaParser(url)
                 newspaper = "walla"
             try:
                 full_text, topic = worker.parse()

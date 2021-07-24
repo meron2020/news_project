@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup
-from basic_worker import BasicWorker
+from basic_worker import BasicParser
 
 
-class HaaretzWorker(BasicWorker):
+class HaaretzParser(BasicParser):
     def __init__(self, url):
-        super(HaaretzWorker, self).__init__(url)
+        super(HaaretzParser, self).__init__(url)
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, 'html.parser')
@@ -16,5 +16,5 @@ class HaaretzWorker(BasicWorker):
         return full_text
 
 
-worker = HaaretzWorker('https://www.haaretz.co.il//news/law/netanyahutrial/.premium-1.9936262')
+worker = HaaretzParser('https://www.haaretz.co.il//news/law/netanyahutrial/.premium-1.9936262')
 worker.parse()

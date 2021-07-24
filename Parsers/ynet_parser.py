@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
-from .basic_worker import BasicWorker
+from .basic_worker import BasicParser
 
 
-class YnetWorker(BasicWorker):
+class YnetParser(BasicParser):
     def __init__(self, url):
         super().__init__(url)
 
