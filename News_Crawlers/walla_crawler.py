@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from basic_crawler import BasicCrawler
+from .basic_crawler import BasicCrawler
 
 
 class WallaCrawler(BasicCrawler):
@@ -25,10 +25,6 @@ class WallaCrawler(BasicCrawler):
         events_divs.pop(-2)
         for div in events_divs:
             for link in div.find_all("a"):
-                all_links.append(link['href'])
+                all_links.append([link['href']])
 
-        print(len(all_links))
-
-
-crawler = WallaCrawler()
-crawler.find_all_links()
+        return all_links
