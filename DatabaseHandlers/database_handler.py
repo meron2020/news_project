@@ -35,7 +35,7 @@ class DatabaseHandler:
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             self.articles_inserted_num += 1
-            if self.articles_inserted_num % 20 == 0:
+            if self.articles_inserted_num % 50 == 0:
                 # print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
                 # print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
                 self.find_each_newspaper_num()
