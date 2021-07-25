@@ -35,18 +35,13 @@ class DatabaseHandler:
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             self.articles_inserted_num += 1
-            if self.articles_inserted_num % 50 == 0:
+            if self.articles_inserted_num % 20 == 0:
                 # print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
                 # print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
                 self.find_each_newspaper_num()
 
-            if self.article_amount == self.articles_sent:
-                print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
-                print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
-
-            if self.find_articles_inserted_num() > 700 and self.find_articles_inserted_num() % 5 == 0:
-                print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
-
+            if self.find_articles_inserted_num() == self.article_amount:
+                self.find_articles_inserted_num()
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
@@ -56,10 +51,10 @@ class DatabaseHandler:
         sqlite_insert_query = "SELECT COUNT(*) FROM articles"
         self.cursor.execute(sqlite_insert_query)
         cur_result = self.cursor.fetchone()
-        return cur_result[0]
+        return cur_result
 
     def find_each_newspaper_num(self):
-        newspaper_dict = {'ynet': 0, 'maariv': 0, 'israel hayom': 0, 'mako': 0}
+        newspaper_dict = {'ynet': 0, 'maariv': 0, 'walla': 0, 'mako': 0}
         query = "SELECT * FROM articles"
         self.cursor.execute(query)
         cur_result = self.cursor.fetchall()
@@ -67,9 +62,9 @@ class DatabaseHandler:
             for newspaper in newspaper_dict.keys():
                 if newspaper in result[1]:
                     newspaper_dict[newspaper] += 1
+        print("\n")
         for newspaper in newspaper_dict:
             print("{} - {}".format(newspaper, newspaper_dict[newspaper]))
-
 
     def callback(self, ch, method, properties, body):
         body = body.decode("utf-8")
