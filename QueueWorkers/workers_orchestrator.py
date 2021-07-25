@@ -10,7 +10,7 @@ class WorkersOrchestrator:
     def run_orchestrator(self):
         worker_list = []
 
-        for i in range(1):
+        for i in range(10):
             worker_list.append(QueueWorker())
 
         worker_threads = list()
