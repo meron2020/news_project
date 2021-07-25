@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from basic_crawler import BasicCrawler
+from .basic_crawler import BasicCrawler
 
 
 class YnetCrawler(BasicCrawler):
@@ -47,8 +47,7 @@ class YnetCrawler(BasicCrawler):
 
         world_links_list = self.find_world_news()
         linked_lists.extend(world_links_list)
-
-        print(linked_lists)
+        return linked_lists
 
     def find_world_news(self):
         world_links_html = self.get_link("https://www.ynet.co.il/news/category/192")
