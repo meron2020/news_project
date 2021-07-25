@@ -15,7 +15,6 @@ class WallaCrawler(BasicCrawler):
         self.news_links = []
 
     def find_all_links(self):
-        # for link in self.root_links:
         html = requests.get("https://news.walla.co.il/").text
         soup = BeautifulSoup(html, 'html.parser')
         events_divs = soup.body.find_all("div", {"class": 'events'})
