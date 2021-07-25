@@ -62,14 +62,15 @@ class CrawlersHandler:
         self.connection.close()
 
     def find_all_news_links(self):
-        ynet_links = self.ynet_crawler.find_all_news_links()
+        ynet_links = self.ynet_crawler.find_all_links()
         self.news_links.extend(ynet_links)
         maariv_links = self.maariv_crawler.return_news_links()
         self.news_links.extend(maariv_links)
-        n12_links = self.n12_crawler.find_news_links()
-        self.news_links.extend(n12_links)
         walla_links = self.walla_crawler.find_all_links()
         self.news_links.extend(walla_links)
+        n12_links = self.n12_crawler.find_news_links()
+        self.news_links.extend(n12_links)
+
 
 
 # handler = CrawlersHandler()
