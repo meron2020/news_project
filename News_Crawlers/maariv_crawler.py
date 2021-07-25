@@ -44,11 +44,4 @@ class MaarivCrawler(BasicCrawler):
                         self.news_links.append([link, 'חינוך ובריאות'])
                     else:
                         self.news_links.append([link, self.topic_dict[topic_key]])
-
-        # print(self.news_links)
-        # print(len(self.news_links))
         return self.news_links
-
-# crawler = MaarivCrawler()
-# # crawler.find_big_item_links()
-# crawler.return_news_links()
