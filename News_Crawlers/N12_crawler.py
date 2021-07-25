@@ -12,8 +12,9 @@ class N12Crawler(BasicCrawler):
                            "https://www.mako.co.il/news-israel?partner=NewsNavBar",
                            "https://www.mako.co.il/news-lifestyle?partner=NewsNavBar",
                            "https://www.mako.co.il/news-education?partner=NewsNavBar"]
-        self.topic_dict = {"military": 'צבא וביטחון', "politics": "המערכת הפוליטית", "law": "משפט ופלילים", "israel": 'כללי',
-                      "lifestyle": 'חינוך ובריאות', 'education': 'חינוך ובריאות'}
+        self.topic_dict = {"military": 'צבא וביטחון', "politics": "המערכת הפוליטית", "law": "משפט ופלילים",
+                           "israel": 'כללי',
+                           "lifestyle": 'חינוך ובריאות', 'education': 'חינוך ובריאות'}
         self.news_links = []
         self.soup = BeautifulSoup(self.page_html, "html.parser")
 
@@ -36,5 +37,3 @@ class N12Crawler(BasicCrawler):
         # print(self.news_links)
         # print(len(self.news_links))
         return self.news_links
-
-
