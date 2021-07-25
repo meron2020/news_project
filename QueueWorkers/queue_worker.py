@@ -24,6 +24,8 @@ class QueueWorker:
             self.DB_queue_handler.send_article_amount(body)
             return
 
+        topic = ''
+
         try:
             url, topic = body[0], body[1]
         except Exception:
@@ -41,15 +43,14 @@ class QueueWorker:
             else:
                 worker = WallaParser(url)
                 newspaper = "walla"
-            try:
-                full_text, topic = worker.parse()
-            except TypeError:
-                full_text = worker.parse()
+                topic = worker.topic_parse()
+            full_text = worker.parse()
             full_text = full_text.replace("'", "")
             self.DB_queue_handler.insert_data_to_DB_queue(newspaper, url, full_text, topic)
         #       worker.print_acknowledgement(newspaper)
 
         except Exception as e:
+            print(e)
             self.DB_queue_handler.notify_handler_of_error()
             # print(" [-] Error in parsing - {}".format(e))
 
