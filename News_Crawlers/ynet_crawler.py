@@ -52,7 +52,8 @@ class YnetCrawler(BasicCrawler):
     def find_world_news(self):
         world_links_html = self.get_link("https://www.ynet.co.il/news/category/192")
         soup = BeautifulSoup(world_links_html, "html.parser")
-        slot_content_div = soup.find("div", {"class", "MultiArticleComponenta ArticleHeadlinesAuto"}).find_all("div", {"class": "slotTitle"})
+        slot_content_div = soup.find("div", {"class", "MultiArticleComponenta ArticleHeadlinesAuto"}).find_all("div", {
+            "class": "slotTitle"})
         whole_links_list = []
         for div in slot_content_div:
             whole_links_list.append(div.find("a"))
@@ -62,8 +63,6 @@ class YnetCrawler(BasicCrawler):
             world_links.append([link['href'], "חדשות בעולם"])
 
         return world_links
-
-
 
     @classmethod
     def find_navigation_div(cls, page_html):
