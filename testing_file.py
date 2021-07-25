@@ -45,3 +45,9 @@ something = ('sdfs', 'fdasf', 'fasef')
 print(len(something))
 
 print(list(['5']))
+
+def func():
+    return 0
+
+num, num1 = func()
+print(num1)
