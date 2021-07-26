@@ -19,17 +19,9 @@ class NewsModel:
     def select_all_rows(cls, conn, table_name):
         cur = conn.cursor()
         cur.execute("SELECT * FROM {}".format(table_name))
-
-        rows_list = {}
-
+        rows_list = []
         rows = cur.fetchall()
         for row in rows:
-
-            if len(row) == 3:
-                rows_list[row[1]] = list(row[2])
-            else:
-                rows_list[row[1]] = list(row[2:])
-
+            rows_list.append({"newspaper": row[1], "url": row[2],
+                              "full_text": row[3], "topic": row[4]})
         return rows_list
-
-
