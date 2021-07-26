@@ -11,7 +11,7 @@ class DatabasePublisher:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='database', exchange_type='direct', durable=True)
 
-    def insert_data_to_DB_queue(self, url, newspaper, full_text, topic):
+    def insert_data_to_DB_queue(self, newspaper, url, full_text, topic):
         payload = json.dumps([newspaper, url, full_text, topic])
 
         index = 0
