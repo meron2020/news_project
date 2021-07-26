@@ -126,3 +126,8 @@ class DatabaseHandler:
 
         cluster_ids_str = ",".join(cluster_ids)
         return cluster_ids_str
+
+    def delete_all_rows(self):
+        sqlite_insert_query = "DELETE FROM {};".format(self.table_name)
+        count = self.cursor.execute(sqlite_insert_query)
+        self.connection.commit()
