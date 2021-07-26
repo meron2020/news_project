@@ -17,6 +17,8 @@ class DatabaseHandler:
         routing_key = "routing_" + routing_key_num
         self.channel.queue_bind(exchange='database', queue=self.queue_name, routing_key=routing_key)
 
+        self.topic_dict = {}
+
         self.connection = connection
         self.cursor = cursor
 
@@ -25,6 +27,8 @@ class DatabaseHandler:
 
         self.articles_inserted_num = 0
         self.articles_not_inserted_num = 0
+
+        self.create_topic_dict()
 
     def insert_article(self, newspaper, url, full_text, topic):
         try:
@@ -76,8 +80,8 @@ class DatabaseHandler:
             self.article_amount = body
         else:
             _id = self.insert_article(body[0], body[1], body[2], body[3])
-            # cluster_id = self.random_clustering()
-            # self.update_cluster_id(_id, cluster_id)
+            cluster_id = self.random_clustering(body[3])
+            self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
 
     def start_consumption(self):
@@ -86,6 +90,22 @@ class DatabaseHandler:
         )
 
         self.channel.start_consuming()
+
+    def create_topic_dict(self):
+        topic_dict = {'צבא וביטחון': [],
+                      'מדיני': [],
+                      'המערכת הפוליטית': [],
+                      'פלסטינים': [],
+                      'כללי': [],
+                      'משפט ופלילים': [],
+                      'חינוך ובריאות': [],
+                      'חדשות בעולם': []}
+
+        for topic in topic_dict.keys():
+            topic_index = list(topic_dict.keys()).index(topic) * 4
+            topic_dict[topic] = list(range(topic_index, topic_index + 4))
+
+        self.topic_dict = topic_dict
 
     def update_cluster_id(self, _id, cluster_id):
         try:
@@ -97,11 +117,12 @@ class DatabaseHandler:
         except sqlite3.Error as error:
             print(" [-] Failed to insert cluster id.", error)
 
-    def random_clustering(self):
-        number_list = list(range(1, 5))
+    def random_clustering(self, topic_arg):
+
+        cluster_list = self.topic_dict[topic_arg]
         cluster_ids = []
-        for i in range(3):
-            cluster_ids.append(str(random.choice(number_list)))
-            number_list.remove(int(cluster_ids[-1]))
+        for i in range(2):
+            cluster_ids.append(str(random.choice(cluster_list)))
+
         cluster_ids_str = ",".join(cluster_ids)
         return cluster_ids_str
