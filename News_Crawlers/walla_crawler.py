@@ -17,13 +17,13 @@ class WallaCrawler(BasicCrawler):
     def find_all_links(self):
         html = requests.get("https://news.walla.co.il/").text
         soup = BeautifulSoup(html, 'html.parser')
-        events_divs = soup.body.find_all("div", {"class": 'events'})
+        css_divs = soup.body.find_all("div", {"class": 'css-ev747'})
+        not_used_categories = ['מדע וסביבה', 'אסור לפספס', 'דעות ופרשנויות']
         all_links = []
-        events_divs.pop(2)
-        events_divs.pop(-1)
-        events_divs.pop(-2)
-        for div in events_divs:
-            for link in div.find_all("a"):
-                all_links.append([link['href']])
+        for css_div in css_divs:
+            if css_div.find("h2").get_text() not in not_used_categories:
+                events_div = css_div.find("div", {"class": 'events'})
+                for link in events_div.find_all("a"):
+                    all_links.append([link['href']])
 
         return all_links
