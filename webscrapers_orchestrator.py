@@ -2,15 +2,10 @@ from QueueWorkers.workers_orchestrator import WorkersOrchestrator
 from News_Crawlers.CrawlersHandler import CrawlersHandler
 import threading
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-import os
 
 
 class WebscrapersOrchestrator:
     def run_orchestrator(self):
-        try:
-            os.remove("news_texts.db")
-        except Exception:
-            pass
         handler = DatabaseHandlerOrchestrator()
         handler_thread = threading.Thread(target=handler.run_orchestrator, args=())
         handler_thread.start()
