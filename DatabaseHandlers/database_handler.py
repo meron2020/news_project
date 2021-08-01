@@ -118,7 +118,6 @@ class DatabaseHandler:
             print(" [-] Failed to insert cluster id.", error)
 
     def random_clustering(self, topic_arg):
-
         cluster_list = self.topic_dict[topic_arg]
         cluster_ids = []
         for i in range(2):
@@ -126,6 +125,22 @@ class DatabaseHandler:
 
         cluster_ids_str = ",".join(cluster_ids)
         return cluster_ids_str
+
+    def select_all_rows(self):
+        """
+        Query all rows in the tasks table
+        :param conn: the Connection object
+        :return:
+        """
+        self.cursor.execute("SELECT * FROM tasks")
+
+        rows = self.cursor.fetchall()
+
+        row_list = []
+        for row in rows:
+            row_list.append(row)
+
+        return row_list
 
     def delete_all_rows(self):
         sqlite_insert_query = "DELETE FROM {};".format(self.table_name)

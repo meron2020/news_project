@@ -17,3 +17,11 @@ class DatabaseHandlerOrchestrator:
             "full_text TEXT, topic Text,cluster_id Text);")
 
         handler.start_consumption()
+
+    def get_all_rows(self):
+        connection = sqlite3.connect("news_texts.db")
+        cursor = connection.cursor()
+        table_name = "articles"
+        handler = DatabaseHandler(str(0), connection, cursor, table_name)
+        print("Successfully Connected to SQLite")
+        return handler.select_all_rows()
