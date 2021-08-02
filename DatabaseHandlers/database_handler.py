@@ -80,8 +80,8 @@ class DatabaseHandler:
             self.article_amount = body
         else:
             _id = self.insert_article(body[0], body[1], body[2], body[3])
-            cluster_id = self.random_clustering(body[3])
-            self.update_cluster_id(_id, cluster_id)
+            # cluster_id = self.random_clustering(body[3])
+            # self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
 
     def start_consumption(self):
@@ -132,7 +132,7 @@ class DatabaseHandler:
         :param conn: the Connection object
         :return:
         """
-        self.cursor.execute("SELECT * FROM tasks")
+        self.cursor.execute("SELECT * FROM {}".format(self.table_name))
 
         rows = self.cursor.fetchall()
 
@@ -144,5 +144,17 @@ class DatabaseHandler:
 
     def delete_all_rows(self):
         sqlite_insert_query = "DELETE FROM {};".format(self.table_name)
+        delete_key_query = "UPDATE SQLITE_SEQUENCE SET SEQ=0;".format(self.table_name)
         count = self.cursor.execute(sqlite_insert_query)
         self.connection.commit()
+        second_count = self.cursor.execute(delete_key_query)
+        self.connection.commit()
+        print(len(self.select_all_rows()))
+
+    def get_url_by_id(self, _id):
+        sqlite_insert_query = "SELECT url FROM {} WHERE id = {}".format(self.table_name, _id)
+        count = self.cursor.execute(sqlite_insert_query)
+        self.connection.commit()
+
+        url = self.cursor.fetchone()
+        return url
