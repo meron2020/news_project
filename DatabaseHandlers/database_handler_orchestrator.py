@@ -5,7 +5,7 @@ import sqlite3
 class DatabaseHandlerOrchestrator:
 
     def run_orchestrator(self):
-        connection = sqlite3.connect("news_texts.db")
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
         handler = DatabaseHandler(str(0), connection, cursor, table_name)
@@ -19,9 +19,16 @@ class DatabaseHandlerOrchestrator:
         handler.start_consumption()
 
     def get_all_rows(self):
-        connection = sqlite3.connect("news_texts.db")
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
         handler = DatabaseHandler(str(0), connection, cursor, table_name)
         print("Successfully Connected to SQLite")
         return handler.select_all_rows()
+
+    def get_url_by_id(self, _id):
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
+        cursor = connection.cursor()
+        table_name = "articles"
+        handler = DatabaseHandler(str(0), connection, cursor, table_name)
+        return handler.get_url_by_id(_id)
