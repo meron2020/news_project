@@ -25,10 +25,10 @@ class YnetCrawler(BasicCrawler):
         for link in category_lists:
             html = self.get_link(link)
             soup = BeautifulSoup(html, "html.parser")
-            article_tabs_div = soup.find_all("div", {"class": "MultiArticleComponenta ArticleHeadlinesAuto"})
+            article_tabs_div = soup.find_all("div", {"class": "ArticleHeadlinesAuto"})
             all_page_link_lists = []
             for div in article_tabs_div:
-                topic = div.find("div", {"class": "TabComponenta multiArticleTab"}).find("div",
+                topic = div.find("div", {"class": "TabComponenta"}).find("div",
                                                                                          {
                                                                                              "class": "rightTitleText"}).get_text()
                 slots = div.find("div", {"class": "slotsContent"})
@@ -52,7 +52,7 @@ class YnetCrawler(BasicCrawler):
     def find_world_news(self):
         world_links_html = self.get_link("https://www.ynet.co.il/news/category/192")
         soup = BeautifulSoup(world_links_html, "html.parser")
-        slot_content_div = soup.find("div", {"class", "MultiArticleComponenta ArticleHeadlinesAuto"}).find_all("div", {
+        slot_content_div = soup.find("div", {"class", "ArticleHeadlinesAuto"}).find_all("div", {
             "class": "slotTitle"})
         whole_links_list = []
         for div in slot_content_div:
