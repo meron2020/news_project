@@ -1,12 +1,10 @@
-import nltk
-import string
-from nltk import word_tokenize
-from hebrew_stopwords import hebrew_stoplist
+
+from scipy import spatial
+import advertools as adv
+from sklearn.feature_extraction.text import TfidfVectorizer
 from Parsers.ynet_parser import YnetParser
 from Parsers.walla_worker import WallaParser
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-
-nltk.download("punkt")
 
 ynet_parser = YnetParser("https://www.ynet.co.il/news/article/by11p0p111y")
 ynet_full_text = ynet_parser.parse()
@@ -14,65 +12,114 @@ ynet_full_text = ynet_parser.parse()
 walla_parser = WallaParser("https://news.walla.co.il/item/3451256")
 walla_full_text = walla_parser.parse()
 
+hebrew_stoplist = adv.stopwords['hebrew']
+
 
 class NLPProcessor:
-    def __init__(self, id_to_text_dict):
+    def __init__(self):
         self.terms = {}
         self.handler = DatabaseHandlerOrchestrator()
-        self.id_to_text_dict = id_to_text_dict
+        self.id_to_text_dict = {}
+        self.doc_idfs = {}
         self.full_texts_dict = {}
+        self.tfidf_dict = {}
+        self.id_to_tuple_dict = {}
 
-    def get_terms(self, text):
-        stoplist = set(hebrew_stoplist)
-        terms = {}
-        word_list = [word for word in word_tokenize(text.lower())
-                     if word not in stoplist and word not in string.punctuation]
+    @classmethod
+    def find_cosine_similarity(cls, doc_1, doc_2):
+        return 1 - spatial.distance.cosine(doc_1, doc_2)
 
-        for word in word_list:
-            terms[word] = terms.get(word, 0) + 1
+    def get_id_to_text_dict(self):
+        rows_tuple_list = self.handler.get_all_rows()
+        for row in rows_tuple_list:
+            self.id_to_text_dict[str(row[0])] = row[3]
+            self.id_to_tuple_dict[str(row[0])] = row
+        return self.id_to_text_dict
 
-        return terms
+    def return_texts(self):
+        return list(self.id_to_text_dict.values())
 
-    def collect_vocabulary(self):
-        for _id, full_text in self.id_to_text_dict.items():
-            terms = self.get_terms(full_text)
+    def get_url_from_id(self, _id):
+        return self.id_to_tuple_dict[_id][1]
+
+    def sklearn_vectorize(self):
+        self.get_id_to_text_dict()
+        vectorizer = TfidfVectorizer(stop_words=hebrew_stoplist)
+        vectors = vectorizer.fit_transform(processor.return_texts())
+        feature_names = vectorizer.get_feature_names()
+        dense = vectors.todense()
+        dense_list = dense.tolist()
+
+        return dense_list
+
+    @classmethod
+    def turn_vectors_to_dict(cls, denseList):
+        vector_dict = {}
+
+        for vector in denseList:
+            vector_dict[str(denseList.index(vector) + 1)] = vector
+
+        cosine_similarity_dict = {}
+
+        for _id, vector in vector_dict.items():
+            vector_similarity_dict = {}
+            for other_id, other_vector in vector_dict.items():
+                similarity = processor.find_cosine_similarity(vector, other_vector)
+                if similarity != 1:
+                    vector_similarity_dict[other_id] = similarity
+            cosine_similarity_dict[_id] = vector_similarity_dict
+
+        return cosine_similarity_dict
+
+    @classmethod
+    def find_top_similarities(cls, cosine_similarity_dict):
+        top_similarities_dict = {}
+        for _id, vector_similarity_dict in cosine_similarity_dict.items():
+            top_dict = {}
+            for other_id, similarity in vector_similarity_dict.items():
+                if similarity > 0.125:
+                    top_dict[other_id] = similarity
+            top_similarities_dict[_id] = top_dict
+
+        return top_similarities_dict
+
+    @classmethod
+    def get_url_dict(cls, top_similarities_dict):
+        used_urls = []
+        urls_dict = {}
+        for _id, top_four_dict in top_similarities_dict.items():
+            top_four_url_dict = {}
             try:
-                for term in terms.keys():
-                    if term in self.terms.keys():
-                        self.terms[term] = self.terms[term] + terms[term]
-                    else:
-                        self.terms[term] = terms[term]
+                for inner_id in top_four_dict.keys():
+                    url = processor.get_url_from_id(inner_id)
+                    if url not in used_urls:
+                        top_four_url_dict[inner_id] = url
+                urls_dict[_id] = top_four_url_dict
             except Exception as e:
-                print(e)
-            self.full_texts_dict[_id] = terms
+                urls_dict[_id] = {}
+        return urls_dict
 
-        return self.terms
-
-    def vectorize(self):
-        output = {}
-        for _id in self.id_to_text_dict.keys():
-            output_vector = []
-            for word in self.terms.keys():
-                if word in self.full_texts_dict[str(_id)].keys():
-                    output_vector.append(int(self.full_texts_dict[str(_id)][word]))
-                else:
-                    output_vector.append(0)
-            output[_id] = output_vector
-
-        return output
-
-    def calculate_idfs(self, full_text_list):
-        doc_idfs = {}
-        for term in self.terms:
-            doc_count = 0
-            pass
-            # for doc_
+    @classmethod
+    def present_urls_similars(cls, urls_dict):
+        for _id, url_dict in urls_dict.items():
+            print(processor.get_url_from_id(_id))
+            print("\n")
+            try:
+                for url in url_dict.values():
+                    if len(url) == 0:
+                        print("No similar texts")
+                    else:
+                        print(url)
+            except Exception:
+                print("No similar texts")
+            print("\n\n\n")
 
 
-processor = NLPProcessor({"1": ynet_full_text, "2": walla_full_text})
-ynet_terms = processor.get_terms(ynet_full_text)
-vocabulary = processor.collect_vocabulary()
-vector = processor.vectorize()
-print(len(ynet_terms))
-print(len(vocabulary))
-print(vector)
+processor = NLPProcessor()
+dense_list = processor.sklearn_vectorize()
+similarity_dict = NLPProcessor.turn_vectors_to_dict(dense_list)
+top_similarities = NLPProcessor.find_top_similarities(similarity_dict)
+url_dict = NLPProcessor.get_url_dict(top_similarities)
+NLPProcessor.present_urls_similars(url_dict)
+
+
