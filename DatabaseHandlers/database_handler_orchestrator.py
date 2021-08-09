@@ -8,13 +8,14 @@ class DatabaseHandlerOrchestrator:
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
-        handler = DatabaseHandler(str(0), connection, cursor, table_name)
+        handler = DatabaseHandler(connection, cursor, table_name)
         print("Successfully Connected to SQLite")
-        handler.delete_all_rows()
-        print("Successfully deleted all rows")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, newspaper TEXT,"
             "full_text TEXT, topic Text,cluster_id Text);")
+
+        handler.delete_all_rows()
+        print("Successfully deleted all rows")
 
         handler.start_consumption()
 
@@ -22,7 +23,7 @@ class DatabaseHandlerOrchestrator:
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
-        handler = DatabaseHandler(str(0), connection, cursor, table_name)
+        handler = DatabaseHandler(connection, cursor, table_name)
         print("Successfully Connected to SQLite")
         return handler.select_all_rows()
 
@@ -30,5 +31,5 @@ class DatabaseHandlerOrchestrator:
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
-        handler = DatabaseHandler(str(0), connection, cursor, table_name)
+        handler = DatabaseHandler(connection, cursor, table_name)
         return handler.get_url_by_id(_id)
