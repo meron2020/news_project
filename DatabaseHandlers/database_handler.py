@@ -5,17 +5,12 @@ import random
 
 
 class DatabaseHandler:
-    def __init__(self, routing_key_num, connection, cursor, table_name):
+    def __init__(self, connection, cursor, table_name):
         self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
         self.channel = self.queue_connection.channel()
-        self.channel.exchange_declare(exchange='database', exchange_type="direct", durable=True)
-        self.result = self.channel.queue_declare(queue='', exclusive=True)
-        self.queue_name = self.result.method.queue
+        self.result = self.channel.queue_declare(queue='database', durable=True)
         self.table_name = table_name
-
-        routing_key = "routing_" + routing_key_num
-        self.channel.queue_bind(exchange='database', queue=self.queue_name, routing_key=routing_key)
 
         self.topic_dict = {}
 
@@ -86,7 +81,7 @@ class DatabaseHandler:
 
     def start_consumption(self):
         self.channel.basic_consume(
-            queue=self.queue_name, on_message_callback=self.callback, auto_ack=True
+            queue="database", on_message_callback=self.callback, auto_ack=True
         )
 
         self.channel.start_consuming()
