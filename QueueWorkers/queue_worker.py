@@ -3,13 +3,13 @@ from Parsers.maariv_parser import MaarivParser
 from Parsers.N12_parser import N12Parser
 from Parsers.walla_worker import WallaParser
 import pika
-from DatabaseHandlers.database_publisher import DatabasePublisher
+from DatabaseHandlers.queue_publisher import QueuePublisher
 import json
 
 
 class QueueWorker:
     def __init__(self):
-        self.DB_queue_handler = DatabasePublisher()
+        self.morphology_queue_handler = QueuePublisher("morphology_engine_queue")
 
         self.news_links = []
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -21,7 +21,7 @@ class QueueWorker:
         body = body.decode("utf-8")
         body = json.loads(body)
         if type(body) == int:
-            self.DB_queue_handler.send_article_amount(body)
+            self.morphology_queue_handler.send_article_amount(body)
             return
 
         topic = ''
@@ -46,12 +46,13 @@ class QueueWorker:
                 topic = worker.topic_parse()
             full_text = worker.parse()
             full_text = full_text.replace("'", "")
-            self.DB_queue_handler.insert_data_to_DB_queue(newspaper, url, full_text, topic)
+            full_text = full_text.replace('"', "")
+            self.morphology_queue_handler.insert_data_to_queue(newspaper, url, full_text, topic)
         #       worker.print_acknowledgement(newspaper)
 
         except Exception as e:
             print(e)
-            self.DB_queue_handler.notify_handler_of_error()
+            self.morphology_queue_handler.notify_handler_of_error()
             # print(" [-] Error in parsing - {}".format(e))
 
     def start_consumption(self):
