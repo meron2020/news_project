@@ -38,7 +38,6 @@ class HebrewMorphologyEngine:
                 pass
             else:
                 hebrew_words.append(word)
-                print(word[0])
 
         return hebrew_words
 
@@ -48,7 +47,6 @@ class HebrewMorphologyEngine:
         for hebrew_word in hebrew_words_list:
             if len(hebrew_word) != 1:
                 full_hebrew_words.append(hebrew_word)
-        print(full_hebrew_words)
 
         base_words = []
         for i in range(len(full_hebrew_words)):
@@ -56,9 +54,9 @@ class HebrewMorphologyEngine:
                 base_words.append(full_hebrew_words[i])
         return base_words
 
-
-morph_engine = HebrewMorphologyEngine()
-response_list = morph_engine.request_json(input("text: "))
-hebrew_words_list = HebrewMorphologyEngine.return_hebrew_words_list(response_list)
-base_words = HebrewMorphologyEngine.base_words(hebrew_words_list)
-print(base_words)
+    def morph_engine_base_words(self, text):
+        morph_engine = HebrewMorphologyEngine()
+        response_list = morph_engine.request_json(text)
+        hebrew_words_list = HebrewMorphologyEngine.return_hebrew_words_list(response_list)
+        base_words = HebrewMorphologyEngine.base_words(hebrew_words_list)
+        return base_words
