@@ -2,6 +2,7 @@ from QueueWorkers.workers_orchestrator import WorkersOrchestrator
 from News_Crawlers.CrawlersHandler import CrawlersHandler
 import threading
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
+from HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
 
 
 class WebscrapersOrchestrator:
@@ -9,6 +10,8 @@ class WebscrapersOrchestrator:
         handler = DatabaseHandlerOrchestrator()
         handler_thread = threading.Thread(target=handler.run_orchestrator, args=())
         handler_thread.start()
+        morphology_workers = MorphologyWorkersOrchestrator()
+        morphology_workers.run_orchestrator()
         workers = WorkersOrchestrator()
         workers.run_orchestrator()
 
