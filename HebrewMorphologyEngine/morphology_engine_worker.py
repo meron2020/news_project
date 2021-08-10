@@ -27,6 +27,8 @@ class MorphologyEngineWorker:
             base_words = engine.morph_engine_base_words(body[2])
             full_text.join(base_words)
 
+            print("[+] Morphed text")
+
             self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
 
         except Exception as e:
