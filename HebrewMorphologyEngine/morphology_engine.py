@@ -54,7 +54,8 @@ class HebrewMorphologyEngine:
                 base_words.append(full_hebrew_words[i])
         return base_words
 
-    def morph_engine_base_words(self, text):
+    @classmethod
+    def morph_engine_base_words(cls, text):
         morph_engine = HebrewMorphologyEngine()
         response_list = morph_engine.request_json(text)
         hebrew_words_list = HebrewMorphologyEngine.return_hebrew_words_list(response_list)
