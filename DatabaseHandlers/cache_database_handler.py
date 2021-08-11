@@ -1,4 +1,7 @@
+import json
 import sqlite3
+
+import pika
 
 
 class CacheDatabaseHandler:
@@ -7,10 +10,18 @@ class CacheDatabaseHandler:
         self.cursor = cursor
         self.table_name = table_name
 
+        self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+
+        self.channel = self.queue_connection.channel()
+        self.result = self.channel.queue_declare(queue='morphology_engine_queue', durable=True)
+        self.table_name = table_name
+        self.connection = connection
+        self.cursor = cursor
+
     def insert_morphology_words(self, word, morphed_word):
         try:
             sqlite_insert_query = """INSERT INTO {} 
-            (word, morphed_words)
+            (word, morphed_word)
             VALUES 
             ({}, {});""".format(self.table_name, word, morphed_word)
             count = self.cursor.execute(sqlite_insert_query)
@@ -28,3 +39,15 @@ class CacheDatabaseHandler:
             row_list[row(0)] = row[1]
 
         return row_list
+
+    def callback(self, ch, method, properties, body):
+        body = body.decode("utf-8")
+        body = json.loads(body)
+        self.insert_morphology_words(body[0], body[1])
+
+    def start_consumption(self):
+        self.channel.basic_consume(
+            queue="morphology_engine_queue", on_message_callback=self.callback, auto_ack=True
+        )
+
+        self.channel.start_consuming()
