@@ -13,7 +13,7 @@ class CacheDatabaseHandler:
         self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
         self.channel = self.queue_connection.channel()
-        self.result = self.channel.queue_declare(queue='morphology_engine_queue', durable=True)
+        self.result = self.channel.queue_declare(queue='morphology_cache', durable=True)
         self.table_name = table_name
         self.connection = connection
         self.cursor = cursor
@@ -47,7 +47,7 @@ class CacheDatabaseHandler:
 
     def start_consumption(self):
         self.channel.basic_consume(
-            queue="morphology_engine_queue", on_message_callback=self.callback, auto_ack=True
+            queue="morphology_cache", on_message_callback=self.callback, auto_ack=True
         )
 
         self.channel.start_consuming()
