@@ -29,6 +29,8 @@ class DatabaseHandlerOrchestrator:
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS morph_cache (word TEXT, morphed_word TEXT;")
 
+        handler.start_consumption()
+
     def get_all_rows(self):
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
