@@ -69,7 +69,6 @@ class CrawlersHandler:
     def send_test_urls_to_queue(self, urls_list):
         for url in urls_list:
             self.send_link_to_queue(url)
-            print("[+] Sent {}".format(url))
 
 # handler = CrawlersHandler()
 # handler.crawlLinks()
