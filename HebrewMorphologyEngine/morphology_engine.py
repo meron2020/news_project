@@ -48,10 +48,10 @@ class HebrewMorphologyEngine:
             if len(hebrew_word) != 1:
                 full_hebrew_words.append(hebrew_word)
 
-        base_words = []
+        base_words = {}
         for i in range(len(full_hebrew_words)):
-            if i % 2 == 1:
-                base_words.append(full_hebrew_words[i])
+            if i % 2 == 0:
+                base_words[full_hebrew_words[i]] = full_hebrew_words[i + 1]
         return base_words
 
     @classmethod
