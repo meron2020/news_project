@@ -38,27 +38,22 @@ class CrawlersHandler:
         )
         print(" [x] Sent article amount to queue.")
 
+    def send_link_to_queue(self, link):
+        link = json.dumps(link)
+        self.channel.basic_publish(
+            exchange='',
+            routing_key='url_queue',
+            body=link
+        )
+        print(" [x] Sent {} to queue".format(link))
+
     def send_links_to_queue(self):
         for link in self.news_links:
-            link = json.dumps(link)
-            self.channel.basic_publish(
-                exchange='',
-                routing_key='url_queue',
-                body=link
-            )
-            print(" [x] Sent {} to queue".format(link))
+            self.send_link_to_queue(link)
 
-    def send_one_link_to_queue(self):
+    def send_num_of_links_to_queue(self):
         for i in range(10):
-            routing_key = "routing_" + str(i % 4)
-            link = json.dumps(self.news_links[i])
-            self.channel.basic_publish(
-                exchange='',
-                routing_key='url_queue',
-                body=link
-            )
-            print(" [x] Sent {} to queue".format(self.news_links[i]))
-
+            self.send_link_to_queue(self.news_links[i])
         self.connection.close()
 
     def find_all_news_links(self):
@@ -71,7 +66,9 @@ class CrawlersHandler:
         n12_links = self.n12_crawler.find_news_links()
         self.news_links.extend(n12_links)
 
-
+    def send_test_urls_to_queue(self, urls_list):
+        for url in urls_list:
+            self.send_link_to_queue(url)
 
 # handler = CrawlersHandler()
 # handler.crawlLinks()
