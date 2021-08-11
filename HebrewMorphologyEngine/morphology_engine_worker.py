@@ -2,6 +2,7 @@ import pika
 import json
 from DatabaseHandlers.queue_publisher import QueuePublisher
 from HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
+from DatabaseHandlers.cache_queue_publisher import CacheQueuePublisher
 
 
 class MorphologyEngineWorker:
@@ -13,6 +14,7 @@ class MorphologyEngineWorker:
         self.channel = self.connection.channel()
         self.result = self.channel.queue_declare(queue="morphology_engine_queue", durable=True)
         self.publisher = QueuePublisher("database")
+        self.cache_publisher = CacheQueuePublisher()
 
     def callback(self, ch, method, properties, body):
         body = body.decode("utf-8")
@@ -25,11 +27,11 @@ class MorphologyEngineWorker:
             full_text = ""
             engine = HebrewMorphologyEngine()
             base_words = engine.morph_engine_base_words(body[2])
-            full_text.join(base_words)
-
-            print("[+] Morphed text")
-
+            full_text.join(base_words.values())
             self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
+            for key, value in base_words.items():
+                self.cache_publisher.insert_data_to_queue(key, value)
+            print("[+] Morphed text")
 
         except Exception as e:
             print(e)
