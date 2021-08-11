@@ -1,5 +1,6 @@
 from DatabaseHandlers.database_handler import DatabaseHandler
 import sqlite3
+from DatabaseHandlers.cache_database_handler import CacheDatabaseHandler
 
 
 class DatabaseHandlerOrchestrator:
@@ -18,6 +19,15 @@ class DatabaseHandlerOrchestrator:
         print("Successfully deleted all rows")
 
         handler.start_consumption()
+
+    def create_cache_db(self):
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
+        cursor = connection.cursor()
+        table_name = "morph_cache"
+        handler = CacheDatabaseHandler(connection, cursor, table_name)
+        print("Successfully Connected to SQLite")
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS morph_cache (word TEXT, morphed_word TEXT;")
 
     def get_all_rows(self):
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
