@@ -9,7 +9,7 @@ from testing_urls_file import TestingUrlsSender
 class TestingOrchestrator:
     def run_orchestrator(self):
         handler = DatabaseHandlerOrchestrator()
-        handler_thread = threading.Thread(target=handler.run_orchestrator())
+        handler_thread = threading.Thread(target=handler.run_orchestrator("tomer"))
         handler_thread.start()
         cache_thread = threading.Thread(target=handler.create_cache_db())
         cache_thread.start()
@@ -21,3 +21,4 @@ class TestingOrchestrator:
 
 
 orchestrator = TestingOrchestrator()
+orchestrator.run_orchestrator()
