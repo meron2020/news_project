@@ -49,10 +49,6 @@ class Graph:
         return shortest_path
 
 
-
-
-
-
 if __name__ == "__main__":
     routes = [
         ("Mumbai", "Paris"),
