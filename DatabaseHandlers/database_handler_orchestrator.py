@@ -5,8 +5,8 @@ from DatabaseHandlers.cache_database_handler import CacheDatabaseHandler
 
 class DatabaseHandlerOrchestrator:
 
-    def run_orchestrator(self):
-        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
+    def run_orchestrator(self, user):
+        connection = sqlite3.connect(r"C:\\Users\\{}\\PycharmProjects\\NewsProject\\news_texts.db".format(user))
         cursor = connection.cursor()
         table_name = "articles"
         handler = DatabaseHandler(connection, cursor, table_name)
