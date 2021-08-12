@@ -7,10 +7,10 @@ class WorkersOrchestrator:
     def worker_func(cls, worker):
         worker.start_consumption()
 
-    def run_orchestrator(self):
+    def run_orchestrator(self, num_of_workers):
         worker_list = []
 
-        for i in range(10):
+        for i in range(num_of_workers):
             worker_list.append(QueueWorker())
 
         worker_threads = list()
