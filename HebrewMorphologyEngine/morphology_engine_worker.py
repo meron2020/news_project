@@ -26,7 +26,7 @@ class MorphologyEngineWorker:
         try:
             full_text = ""
             engine = HebrewMorphologyEngine()
-            base_words = engine.morph_engine_base_words(body[2])
+            base_words = engine.return_hebrew_morph_dict(body[2])
             full_text.join(base_words.values())
             self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
             for key, value in base_words.items():
