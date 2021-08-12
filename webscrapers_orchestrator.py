@@ -11,9 +11,9 @@ class WebscrapersOrchestrator:
         handler_thread = threading.Thread(target=handler.run_orchestrator, args=())
         handler_thread.start()
         morphology_workers = MorphologyWorkersOrchestrator()
-        morphology_workers.run_orchestrator()
+        morphology_workers.run_orchestrator(10)
         workers = WorkersOrchestrator()
-        workers.run_orchestrator()
+        workers.run_orchestrator(10)
 
         crawler_handler = CrawlersHandler()
         crawler_thread = threading.Thread(target=crawler_handler.crawl_links, args=())
