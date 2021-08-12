@@ -4,6 +4,7 @@ from News_Crawlers.CrawlersHandler import CrawlersHandler
 class TestingUrlsSender:
     @classmethod
     def send_urls(cls):
+        url = ["https://www.ynet.co.il/news/article/byeya7xxy#autoplay", "צבא וביטחון"]
         urls = [
             ["https://www.ynet.co.il/news/article/byeya7xxy#autoplay", "צבא וביטחון"],
             ["https://www.ynet.co.il/news/article/r1dfhexlf#autoplay", "חינוך ובריאות"],
@@ -25,4 +26,5 @@ class TestingUrlsSender:
         ]
 
         handler = CrawlersHandler()
-        handler.send_test_urls_to_queue(urls)
+        # handler.send_test_urls_to_queue(urls)
+        handler.send_link_to_queue(url)
