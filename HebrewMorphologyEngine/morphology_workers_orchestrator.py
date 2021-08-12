@@ -7,10 +7,10 @@ class MorphologyWorkersOrchestrator:
     def worker_func(cls, worker):
         worker.start_consumption()
 
-    def run_orchestrator(self):
+    def run_orchestrator(self, num_workers):
         worker_list = []
 
-        for i in range(1):
+        for i in range(num_workers):
             worker_list.append(MorphologyEngineWorker())
 
         worker_threads = list()
