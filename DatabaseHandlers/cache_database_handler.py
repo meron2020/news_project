@@ -19,6 +19,8 @@ class CacheDatabaseHandler:
         self.cursor = cursor
 
     def insert_morphology_words(self, word, morphed_word):
+        word = "'" + word + "'"
+        morphed_word = "'" + morphed_word + "'"
         try:
             sqlite_insert_query = """INSERT INTO {} 
             (word, morphed_word)
