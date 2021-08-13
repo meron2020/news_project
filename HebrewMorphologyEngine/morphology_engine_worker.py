@@ -31,7 +31,7 @@ class MorphologyEngineWorker:
             self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
             for key, value in base_words.items():
                 self.cache_publisher.insert_data_to_queue(key, value)
-            print("[+] Morphed text")
+            print("[+] Morphed text - {}".format(body[1]))
 
         except Exception as e:
             print(e)
