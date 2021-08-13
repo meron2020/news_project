@@ -30,6 +30,13 @@ class DatabaseHandlerOrchestrator:
 
         handler.start_consumption()
 
+    def get_all_rows_from_cache(self):
+        connection = sqlite3.connect(r"C:\\Users\\tomer\\PycharmProjects\\NewsProject\\news_texts.db")
+        cursor = connection.cursor()
+        table_name = "morph_cache"
+        handler = CacheDatabaseHandler(connection, cursor, table_name)
+        return handler.return_word_to_morph_dict()
+
     def get_all_rows(self):
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
