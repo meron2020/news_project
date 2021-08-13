@@ -38,7 +38,7 @@ class CacheDatabaseHandler:
 
         row_list = {}
         for row in rows:
-            row_list[row(0)] = row[1]
+            row_list[row[0]] = row[1]
 
         return row_list
 
