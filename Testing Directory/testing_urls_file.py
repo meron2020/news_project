@@ -26,5 +26,4 @@ class TestingUrlsSender:
         ]
 
         handler = CrawlersHandler()
-        # handler.send_test_urls_to_queue(urls)
-        handler.send_link_to_queue(url)
+        handler.send_test_urls_to_queue(urls)
