@@ -10,6 +10,8 @@ class WebscrapersOrchestrator:
         handler = DatabaseHandlerOrchestrator()
         handler_thread = threading.Thread(target=handler.run_orchestrator, args=())
         handler_thread.start()
+        cache_thread = threading.Thread(target=handler.create_cache_db)
+        cache_thread.start()
         morphology_workers = MorphologyWorkersOrchestrator()
         morphology_workers.run_orchestrator(10)
         workers = WorkersOrchestrator()
