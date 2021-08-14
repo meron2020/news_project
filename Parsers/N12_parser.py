@@ -13,6 +13,8 @@ class N12Parser(BasicParser):
         text_divs.pop()
         for text_div in text_divs:
             full_text += text_div.get_text()
+
+        full_text = self.remove_punctuation(full_text)
         return full_text
 
 

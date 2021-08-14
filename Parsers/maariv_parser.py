@@ -22,4 +22,5 @@ class MaarivParser(BasicParser):
             text = text[::-1]
         full_text = ' '.join(full_text_list)
 
+        full_text = self.remove_punctuation(full_text)
         return full_text

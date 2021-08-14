@@ -9,7 +9,9 @@ class WallaParser(BasicParser):
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
         text_div = soup.find("section", {"class": "article-content"})
-        return text_div.get_text()
+        full_text = text_div.get_text()
+        full_text = self.remove_punctuation(full_text)
+        return full_text
 
     def topic_parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
@@ -29,6 +31,3 @@ class WallaParser(BasicParser):
         elif topic == 'אירועים בארץ':
             topic = 'כללי'
         return topic
-
-
-

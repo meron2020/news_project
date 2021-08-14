@@ -13,4 +13,5 @@ class YnetParser(BasicParser):
         for span in texts_span:
             texts.append(span.getText())
         full_text = ''.join(texts)
+        full_text = self.remove_punctuation(full_text)
         return full_text
