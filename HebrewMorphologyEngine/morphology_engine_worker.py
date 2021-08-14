@@ -6,13 +6,14 @@ from DatabaseHandlers.cache_queue_publisher import CacheQueuePublisher
 
 
 class MorphologyEngineWorker:
-    def __init__(self):
+    def __init__(self, word_dict):
         connection_parameter = "localhost"
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=connection_parameter)
         )
         self.channel = self.connection.channel()
         self.result = self.channel.queue_declare(queue="morphology_engine_queue", durable=True)
+        self.word_dict = word_dict
         self.publisher = QueuePublisher("database")
         self.cache_publisher = CacheQueuePublisher()
 
@@ -26,10 +27,21 @@ class MorphologyEngineWorker:
         try:
             full_text = ""
             engine = HebrewMorphologyEngine()
-            base_words = engine.return_hebrew_morph_dict(body[2])
-            full_text.join(base_words.values())
+            text = body[2]
+            text_list = text.split()
+            base_words = []
+            for i in range(len(text_list)):
+                if text_list[i] in self.word_dict.keys():
+                    base_words.append(self.word_dict[text_list[i]])
+                    text_list.pop(i)
+
+            text = ' '.join(text_list)
+            hebrew_morph_dict = engine.return_hebrew_morph_dict(text)
+            for value in hebrew_morph_dict.values():
+                base_words.append(value)
+            full_text = ' '.join(base_words)
             self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
-            for key, value in base_words.items():
+            for key, value in hebrew_morph_dict.items():
                 self.cache_publisher.insert_data_to_queue(key, value)
             print("[+] Morphed text - {}".format(body[1]))
 
