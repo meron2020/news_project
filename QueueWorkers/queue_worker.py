@@ -45,8 +45,6 @@ class QueueWorker:
                 newspaper = "walla"
                 topic = worker.topic_parse()
             full_text = worker.parse()
-            full_text = full_text.replace("'", "")
-            full_text = full_text.replace('"', "")
             full_text = ' '.join(full_text.split()[:50])
             self.morphology_queue_handler.insert_data_to_queue(newspaper, url, full_text, topic)
         #       worker.print_acknowledgement(newspaper)
