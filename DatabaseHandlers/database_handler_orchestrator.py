@@ -5,7 +5,7 @@ from DatabaseHandlers.cache_database_handler import CacheDatabaseHandler
 
 class DatabaseHandlerOrchestrator:
     def run_orchestrator(self):
-        connection = sqlite3.connect(r"C:\\Users\\tomer\\PycharmProjects\\NewsProject\\news_texts.db")
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "articles"
         handler = DatabaseHandler(connection, cursor, table_name)
@@ -20,7 +20,7 @@ class DatabaseHandlerOrchestrator:
         handler.start_consumption()
 
     def create_cache_db(self):
-        connection = sqlite3.connect(r"C:\\Users\\tomer\\PycharmProjects\\NewsProject\\news_texts.db")
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "morph_cache"
         handler = CacheDatabaseHandler(connection, cursor, table_name)
@@ -31,7 +31,7 @@ class DatabaseHandlerOrchestrator:
         handler.start_consumption()
 
     def get_all_rows_from_cache(self):
-        connection = sqlite3.connect(r"C:\\Users\\tomer\\PycharmProjects\\NewsProject\\news_texts.db")
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
         table_name = "morph_cache"
         handler = CacheDatabaseHandler(connection, cursor, table_name)
