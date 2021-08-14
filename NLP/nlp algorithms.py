@@ -1,16 +1,8 @@
-
 from scipy import spatial
 import advertools as adv
 from sklearn.feature_extraction.text import TfidfVectorizer
-from Parsers.ynet_parser import YnetParser
-from Parsers.walla_worker import WallaParser
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-
-ynet_parser = YnetParser("https://www.ynet.co.il/news/article/by11p0p111y")
-ynet_full_text = ynet_parser.parse()
-
-walla_parser = WallaParser("https://news.walla.co.il/item/3451256")
-walla_full_text = walla_parser.parse()
+from HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
 
 hebrew_stoplist = adv.stopwords['hebrew']
 
@@ -18,6 +10,7 @@ hebrew_stoplist = adv.stopwords['hebrew']
 class NLPProcessor:
     def __init__(self):
         self.terms = {}
+        self.morphology_engine = HebrewMorphologyEngine()
         self.handler = DatabaseHandlerOrchestrator()
         self.id_to_text_dict = {}
         self.doc_idfs = {}
@@ -37,7 +30,14 @@ class NLPProcessor:
         return self.id_to_text_dict
 
     def return_texts(self):
-        return list(self.id_to_text_dict.values())
+        base_words_list = []
+        for text in self.id_to_text_dict.values():
+            try:
+                base_words = self.morphology_engine.morph_engine_base_words(text)
+                base_words_list.append(base_words)
+            except Exception as E:
+                print(E)
+        return base_words_list
 
     def get_url_from_id(self, _id):
         return self.id_to_tuple_dict[_id][1]
@@ -121,5 +121,3 @@ similarity_dict = NLPProcessor.turn_vectors_to_dict(dense_list)
 top_similarities = NLPProcessor.find_top_similarities(similarity_dict)
 url_dict = NLPProcessor.get_url_dict(top_similarities)
 NLPProcessor.present_urls_similars(url_dict)
-
-
