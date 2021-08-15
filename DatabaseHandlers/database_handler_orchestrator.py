@@ -9,13 +9,13 @@ class DatabaseHandlerOrchestrator:
         cursor = connection.cursor()
         table_name = "articles"
         handler = DatabaseHandler(connection, cursor, table_name)
-        print("Successfully Connected to SQLite")
+        print("Successfully Connected to articles DB Table")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, newspaper TEXT,"
             "full_text TEXT, topic Text,cluster_id Text);")
 
         handler.delete_all_rows()
-        print("Successfully deleted all rows")
+        print("Successfully deleted all rows in articles table")
 
         handler.start_consumption()
 
@@ -24,7 +24,7 @@ class DatabaseHandlerOrchestrator:
         cursor = connection.cursor()
         table_name = "morph_cache"
         handler = CacheDatabaseHandler(connection, cursor, table_name)
-        print("Successfully Connected to SQLite")
+        print("Successfully Connected to morph_cache DB Table")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS morph_cache (word TEXT, morphed_word TEXT);")
 
