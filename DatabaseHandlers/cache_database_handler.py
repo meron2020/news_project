@@ -37,8 +37,6 @@ class CacheDatabaseHandler:
         morphology_cache = {}
         for row in rows:
             morphology_cache[row[0]] = row[1]
-
-        print(len(morphology_cache))
         return morphology_cache
 
     def callback(self, ch, method, properties, body):
