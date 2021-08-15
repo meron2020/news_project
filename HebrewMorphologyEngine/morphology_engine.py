@@ -21,6 +21,7 @@ class HebrewMorphologyEngine:
                                 auth=(),
                                 )
 
+        text_list = text.split()
         split_response = response.json()['md_lattice'].split("\n")
         hebrew_words_dict = {}
         one_word_before = False
@@ -29,12 +30,9 @@ class HebrewMorphologyEngine:
             try:
                 if len(word_list[2]) != 1:
                     if one_word_before:
-                        before_word = split_response[split_response.index(category) - 1].split()[2]
-                        two_before_word = split_response[split_response.index(category) - 2].split()[2]
-                        if len(two_before_word) != 1:
-                            hebrew_words_dict[two_before_word + before_word + word_list[2]] = word_list[3]
-                        else:
-                            hebrew_words_dict[before_word + word_list[2]] = word_list[3]
+                        for full_word in text_list:
+                            if word_list[2] in full_word:
+                                hebrew_words_dict[full_word] = word_list[3]
                         one_word_before = False
                     else:
                         hebrew_words_dict[word_list[2]] = word_list[3]
