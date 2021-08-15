@@ -19,13 +19,11 @@ class CacheDatabaseHandler:
         self.cursor = cursor
 
     def insert_morphology_words(self, word, morphed_word):
-        word = "'" + word + "'"
-        morphed_word = "'" + morphed_word + "'"
+        word = '"' + word + '"'
+        morphed_word = '"' + morphed_word + '"'
         try:
-            sqlite_insert_query = """INSERT INTO {} 
-            (word, morphed_word)
-            VALUES 
-            ({}, {});""".format(self.table_name, word, morphed_word)
+            sqlite_insert_query = """INSERT INTO {} (word, morphed_word) VALUES ({}, {});""".format(self.table_name,
+                                                                                                    word, morphed_word)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
         except sqlite3.Error as error:
@@ -36,11 +34,12 @@ class CacheDatabaseHandler:
 
         rows = self.cursor.fetchall()
 
-        row_list = {}
+        morphology_cache = {}
         for row in rows:
-            row_list[row[0]] = row[1]
+            morphology_cache[row[0]] = row[1]
 
-        return row_list
+        print(len(morphology_cache))
+        return morphology_cache
 
     def callback(self, ch, method, properties, body):
         body = body.decode("utf-8")
