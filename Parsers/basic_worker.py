@@ -11,10 +11,10 @@ class BasicParser:
         return r.text
 
     def remove_punctuation(self, text):
-        text.replace("'", "")
-        text.replace('"', "")
+        text = text.replace("'", "")
+        text = text.replace('"', "")
         for punc in punctuation:
-            text.replace(punc, "")
+            text = text.replace(punc, " ")
 
         return text
 
