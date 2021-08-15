@@ -25,17 +25,18 @@ class MorphologyEngineWorker:
             return
 
         try:
-            full_text = ""
             engine = HebrewMorphologyEngine()
             text = body[2]
             text_list = text.split()
             base_words = []
-            for i in range(len(text_list)):
-                if text_list[i] in self.word_dict.keys():
-                    base_words.append(self.word_dict[text_list[i]])
-                    text_list.pop(i)
-
-            text = ' '.join(text_list)
+            unmorphed_list = []
+            for word in text_list:
+                if word in self.word_dict.keys():
+                    base_words.append(self.word_dict[word])
+                else:
+                    unmorphed_list.append(word)
+            print(len(unmorphed_list))
+            text = ' '.join(unmorphed_list)
             hebrew_morph_dict = engine.return_hebrew_morph_dict(text)
             for value in hebrew_morph_dict.values():
                 base_words.append(value)
