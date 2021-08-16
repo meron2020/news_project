@@ -19,6 +19,15 @@ class DatabaseHandlerOrchestrator:
 
         handler.start_consumption()
 
+    def update_cluster_ids(self, cluster_ids_dict):
+        connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
+        cursor = connection.cursor()
+        table_name = "articles"
+        handler = DatabaseHandler(connection, cursor, table_name)
+        for cluster_id, articles in cluster_ids_dict.items():
+            for article in articles:
+                handler.update_cluster_id(article, cluster_id)
+
     def create_cache_db(self):
         connection = sqlite3.connect(r"C:\\Users\\coolermaster\\PycharmProjects\\NewsProject\\news_texts.db")
         cursor = connection.cursor()
