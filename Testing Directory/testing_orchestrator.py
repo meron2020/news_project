@@ -15,9 +15,9 @@ class TestingOrchestrator:
         cache_thread = threading.Thread(target=handler.create_cache_db)
         cache_thread.start()
         morphology_workers = MorphologyWorkersOrchestrator()
-        morphology_workers.run_orchestrator(3, word_dict)
+        morphology_workers.run_orchestrator(1, word_dict)
         workers = WorkersOrchestrator()
-        workers.run_orchestrator(3)
+        workers.run_orchestrator(1)
         TestingUrlsSender.send_urls()
 
 
