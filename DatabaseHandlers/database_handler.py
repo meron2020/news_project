@@ -106,7 +106,7 @@ class DatabaseHandler:
         try:
             sqlite_insert_query = """UPDATE {}
                 SET cluster_id = {}
-                WHERE id = {};""".format(self.table_name, str('"' + cluster_id + '"'), _id)
+                WHERE id = {};""".format(self.table_name, ('"' + str(cluster_id) + '"'), _id)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
         except sqlite3.Error as error:
