@@ -12,8 +12,8 @@ class QueuePublisher:
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=self.queue_name, durable=True)
 
-    def insert_data_to_queue(self, newspaper, url, full_text, topic):
-        payload = json.dumps([newspaper, url, full_text, topic])
+    def insert_data_to_queue(self, newspaper, url, full_text, topic, title):
+        payload = json.dumps([newspaper, url, full_text, topic, title])
 
         self.channel.basic_publish(
             exchange='',
