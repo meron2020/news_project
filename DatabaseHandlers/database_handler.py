@@ -74,7 +74,7 @@ class DatabaseHandler:
         elif type(body) == int:
             self.article_amount = body
         else:
-            _id = self.insert_article(body[0], body[1], body[2], body[3])
+            _id = self.insert_article(body[0], body[1], body[2], body[3], body[4])
             # cluster_id = self.random_clustering(body[3])
             # self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
