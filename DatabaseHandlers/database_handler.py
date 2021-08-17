@@ -25,12 +25,12 @@ class DatabaseHandler:
 
         self.create_topic_dict()
 
-    def insert_article(self, newspaper, url, full_text, topic):
+    def insert_article(self, newspaper, url, full_text, topic, title):
         try:
             sqlite_insert_query = """INSERT INTO {}
-            (newspaper, url, full_text, topic, cluster_id)
+            (newspaper, url, full_text, topic, title, cluster_id)
             VALUES
-            ('{}', '{}', '{}', '{}', NULL);""".format(self.table_name, newspaper, url, full_text, topic)
+            ('{}', '{}', '{}', '{}', '{}', NULL);""".format(self.table_name, newspaper, url, full_text, topic, title)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             self.articles_inserted_num += 1
