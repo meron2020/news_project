@@ -8,6 +8,9 @@ class MaarivParser(BasicParser):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
+        title_div = soup.find("div", {"class": "article-title"})
+        h1_title = title_div.find("h1")
+        title_text = title_div.get_text()
         texts = []
         full_text = ""
         texts_div = soup.find_all("div", {"class": "article-body"})
@@ -23,4 +26,4 @@ class MaarivParser(BasicParser):
         full_text = ' '.join(full_text_list)
 
         full_text = self.remove_punctuation(full_text)
-        return full_text
+        return full_text, title_text

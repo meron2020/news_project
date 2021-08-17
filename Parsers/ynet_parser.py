@@ -8,7 +8,7 @@ class YnetParser(BasicParser):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
-        title_div = soup.find_all("div", {"class": "mainTitleWrapper"})
+        title_div = soup.find("div", {"class": "mainTitleWrapper"})
         h1_title = title_div.find("h1")
         title_text = h1_title.get_text()
         texts = []
