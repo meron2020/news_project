@@ -11,6 +11,7 @@ class MaarivParser(BasicParser):
         title_div = soup.find("div", {"class": "article-title"})
         h1_title = title_div.find("h1")
         title_text = h1_title.get_text()
+        title_text.replace('"', "'")
         texts = []
         full_text = ""
         texts_div = soup.find_all("div", {"class": "article-body"})
