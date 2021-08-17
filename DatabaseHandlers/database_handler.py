@@ -39,8 +39,8 @@ class DatabaseHandler:
                 # print(" [-] {} articles failed to insert.".format(self.articles_not_inserted_num))
                 self.find_each_newspaper_num()
 
-            if self.find_articles_inserted_num() == self.article_amount:
-                self.find_articles_inserted_num()
+            if (self.articles_inserted_num + self.articles_not_inserted_num) == self.article_amount:
+                self.find_each_newspaper_num()
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
