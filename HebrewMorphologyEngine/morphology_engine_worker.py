@@ -41,7 +41,7 @@ class MorphologyEngineWorker:
             for value in hebrew_morph_dict.values():
                 base_words.append(value)
             full_text = ' '.join(base_words)
-            self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3])
+            self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3], body[4])
             for key, value in hebrew_morph_dict.items():
                 self.cache_publisher.insert_data_to_queue(key, value)
             print("[+] Morphed text - {}".format(body[1]))
