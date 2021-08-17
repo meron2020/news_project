@@ -23,5 +23,6 @@ class NewsModel:
         rows = cur.fetchall()
         for row in rows:
             rows_list.append({"newspaper": row[1], "url": row[2],
-                              "full_text": row[3], "topic": row[4]})
+                              "full_text": row[3], "topic": row[4],
+                              "title": row[5], "cluster_id": row[6]})
         return rows_list
