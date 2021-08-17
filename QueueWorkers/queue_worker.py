@@ -44,9 +44,9 @@ class QueueWorker:
                 worker = WallaParser(url)
                 newspaper = "walla"
                 topic = worker.topic_parse()
-            full_text = worker.parse()
+            full_text, title = worker.parse()
             full_text = ' '.join(full_text.split()[:50])
-            self.morphology_queue_handler.insert_data_to_queue(newspaper, url, full_text, topic)
+            self.morphology_queue_handler.insert_data_to_queue(newspaper, url, full_text, topic, title)
         #       worker.print_acknowledgement(newspaper)
 
         except Exception as e:
