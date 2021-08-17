@@ -12,7 +12,7 @@ class DatabaseHandlerOrchestrator:
         print("Successfully Connected to articles DB Table")
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, newspaper TEXT,"
-            "full_text TEXT, topic Text,cluster_id Text);")
+            "full_text TEXT, topic Text, title Text, cluster_id Text);")
 
         handler.delete_all_rows()
         print("Successfully deleted all rows in articles table")
