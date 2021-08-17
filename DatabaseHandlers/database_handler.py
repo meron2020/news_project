@@ -41,6 +41,7 @@ class DatabaseHandler:
 
             if (self.articles_inserted_num + self.articles_not_inserted_num) == self.article_amount:
                 self.find_each_newspaper_num()
+                print("[+] Inserted {} articles out of {}".format(self.articles_inserted_num, self.article_amount))
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
