@@ -10,7 +10,7 @@ class MaarivParser(BasicParser):
         soup = BeautifulSoup(self.page_html, "html.parser")
         title_div = soup.find("div", {"class": "article-title"})
         h1_title = title_div.find("h1")
-        title_text = title_div.get_text()
+        title_text = h1_title.get_text()
         texts = []
         full_text = ""
         texts_div = soup.find_all("div", {"class": "article-body"})
