@@ -8,10 +8,13 @@ class WallaParser(BasicParser):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
+        header_div = soup.find("header")
+        h1_title = header_div.find("h1")
+        title_text = h1_title.get_text()
         text_div = soup.find("section", {"class": "article-content"})
         full_text = text_div.get_text()
         full_text = self.remove_punctuation(full_text)
-        return full_text
+        return full_text, title_text
 
     def topic_parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")

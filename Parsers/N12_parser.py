@@ -8,6 +8,8 @@ class N12Parser(BasicParser):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
+        title_h1 = soup.find("h1")
+        title_text = title_h1.get_text()
         full_text = ""
         text_divs = soup.find_all("p")
         text_divs.pop()
@@ -15,6 +17,6 @@ class N12Parser(BasicParser):
             full_text += text_div.get_text()
 
         full_text = self.remove_punctuation(full_text)
-        return full_text
+        return full_text, title_text
 
 
