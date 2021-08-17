@@ -8,7 +8,8 @@ class WallaParser(BasicParser):
 
     def parse(self):
         soup = BeautifulSoup(self.page_html, "html.parser")
-        header_div = soup.find("header")
+        header_div = soup.find("section", {"class": "item-main-content"})
+        header_div = header_div.find("header")
         h1_title = header_div.find("h1")
         title_text = h1_title.get_text()
         text_div = soup.find("section", {"class": "article-content"})
