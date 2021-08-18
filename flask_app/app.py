@@ -6,7 +6,6 @@ from flask_app.db import db
 from Resources.news import News
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 
@@ -24,7 +23,7 @@ def create_tables():
 # def serve():
 #     return send_from_directory()
 
-api.add_resource(News)
+api.add_resource(News, '/news')
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
