@@ -6,23 +6,18 @@ class NewsModel:
         pass
 
     @classmethod
-    def create_connection(cls, db_file):
-        conn = None
-        try:
-            conn = sqlite3.connect(db_file)
-        except sqlite3.Error as e:
-            print(e)
-
+    def create_connection(cls):
+        conn = sqlite3.connect(r"..\news_texts.db")
         return conn
 
     @classmethod
-    def select_all_rows(cls, conn, table_name):
+    def select_all_rows(cls):
+        conn = NewsModel.create_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM {}".format(table_name))
+        cur.execute("SELECT * FROM {}".format("articles"))
         rows_list = []
         rows = cur.fetchall()
         for row in rows:
-            rows_list.append({"newspaper": row[1], "url": row[2],
-                              "full_text": row[3], "topic": row[4],
+            rows_list.append({"newspaper": row[2], "url": row[1], "topic": row[4],
                               "title": row[5], "cluster_id": row[6]})
         return rows_list
