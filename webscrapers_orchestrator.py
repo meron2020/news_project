@@ -14,14 +14,10 @@ class WebscrapersOrchestrator:
         cache_thread = threading.Thread(target=handler.create_cache_db)
         cache_thread.start()
         morphology_workers = MorphologyWorkersOrchestrator()
-        morphology_workers.run_orchestrator(1, word_dict)
+        morphology_workers.run_orchestrator(3, word_dict)
         workers = WorkersOrchestrator()
-        workers.run_orchestrator(1)
+        workers.run_orchestrator(3)
 
         crawler_handler = CrawlersHandler()
         crawler_thread = threading.Thread(target=crawler_handler.crawl_links, args=())
         crawler_thread.start()
-
-
-orchestrator = WebscrapersOrchestrator()
-orchestrator.run_orchestrator()
