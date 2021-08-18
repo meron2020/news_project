@@ -48,7 +48,7 @@ class MorphologyEngineWorker:
 
         except Exception as e:
             print(e)
-            self.publisher.notify_handler_of_error()
+            self.publisher.send_event_notification("Error in Parsing.")
 
     def start_consumption(self):
         self.channel.basic_consume(
