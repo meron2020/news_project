@@ -2,6 +2,7 @@ import sqlite3
 import pika
 import json
 import random
+from DatabaseHandlers.queue_publisher import QueuePublisher
 
 
 class DatabaseHandler:
@@ -11,6 +12,7 @@ class DatabaseHandler:
         self.channel = self.queue_connection.channel()
         self.result = self.channel.queue_declare(queue='database', durable=True)
         self.table_name = table_name
+        self.publisher = QueuePublisher("event_notifications")
 
         self.topic_dict = {}
 
@@ -42,6 +44,7 @@ class DatabaseHandler:
             if (self.articles_inserted_num + self.articles_not_inserted_num) == self.article_amount:
                 self.find_each_newspaper_num()
                 print("[+] Inserted {} articles out of {}".format(self.articles_inserted_num, self.article_amount))
+                self.publisher.send_event_notification("Finished Webscraping")
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
