@@ -1,7 +1,7 @@
 import pika
 import json
 from DatabaseHandlers.queue_publisher import QueuePublisher
-from HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
+from flask_app.Backend.HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
 from DatabaseHandlers.cache_queue_publisher import CacheQueuePublisher
 
 

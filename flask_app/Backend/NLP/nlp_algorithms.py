@@ -2,7 +2,7 @@ from scipy import spatial
 import advertools as adv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-from HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
+from flask_app.Backend.HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
 
 hebrew_stoplist = adv.stopwords['hebrew']
 

@@ -1,4 +1,4 @@
-from News_Crawlers.CrawlersHandler import CrawlersHandler
+from flask_app.Backend.News_Crawlers.CrawlersHandler import CrawlersHandler
 
 
 class TestingUrlsSender:

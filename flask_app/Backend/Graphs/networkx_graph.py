@@ -2,10 +2,9 @@ import json
 
 import networkx as nx
 import networkx.algorithms.components as nac
-from NLP.nlp_algorithms import NLPProcessor
+from flask_app.Backend.NLP.nlp_algorithms import NLPProcessor
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
 import pika
-import matplotlib.pyplot as plt
 
 
 class GraphConnections:

@@ -1,7 +1,7 @@
-from Parsers.ynet_parser import YnetWorker
-from Parsers.N12_parser import N12Worker
-from Parsers.israel_hayom_parser import IsraelHayomWorker
-from Parsers.maariv_parser import MaarivWorker
+from flask_app.Backend.Parsers.ynet_parser import YnetWorker
+from flask_app.Backend.Parsers.N12_parser import N12Worker
+from flask_app.Backend.Parsers.israel_hayom_parser import IsraelHayomWorker
+from flask_app.Backend.Parsers.maariv_parser import MaarivWorker
 from DatabaseHandlers.database_handler import DatabaseHandler
 import sqlite3
 import random

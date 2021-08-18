@@ -1,8 +1,8 @@
-from QueueWorkers.workers_orchestrator import WorkersOrchestrator
-from News_Crawlers.CrawlersHandler import CrawlersHandler
+from flask_app.Backend.QueueWorkers.workers_orchestrator import WorkersOrchestrator
+from flask_app.Backend.News_Crawlers.CrawlersHandler import CrawlersHandler
 import threading
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-from HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
+from flask_app.Backend.HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
 
 
 class WebscrapersOrchestrator:
