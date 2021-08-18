@@ -51,7 +51,7 @@ class QueueWorker:
 
         except Exception as e:
             print(e)
-            self.morphology_queue_handler.notify_handler_of_error()
+            self.morphology_queue_handler.send_event_notification("Error in Parsing.")
             # print(" [-] Error in parsing - {}".format(e))
 
     def start_consumption(self):
