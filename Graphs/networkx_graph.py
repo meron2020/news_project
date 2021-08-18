@@ -1,17 +1,22 @@
+import json
+
 import networkx as nx
 import networkx.algorithms.components as nac
 from NLP.nlp_algorithms import NLPProcessor
 from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
+import pika
 import matplotlib.pyplot as plt
 
 
 class GraphConnections:
     def __init__(self):
         self.handler = DatabaseHandlerOrchestrator()
+        self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.queue_connection.channel()
+        self.result = self.channel.queue_declare(queue="event_notifications", durable=True)
         self.processor = ""
         self.id_to_text_dict = ""
         self.id_to_tuple_dict = ""
-        self.create_NLP()
 
     def create_NLP(self):
         self.processor = NLPProcessor()
@@ -21,6 +26,14 @@ class GraphConnections:
         dense_list = self.processor.sklearn_vectorize()
         similarity_dict = NLPProcessor.turn_vectors_to_dict(dense_list)
         return similarity_dict
+
+    def callback(self, ch, method, properties, body):
+        body = body.decode("utf-8")
+        body = json.loads(body)
+        if body == "Finished Webscraping":
+            self.create_NLP()
+            nx_graph = self.create_graph()
+            self.update_cluster_ids(nx_graph)
 
     def create_graph(self):
         G = nx.Graph()
@@ -43,14 +56,9 @@ class GraphConnections:
         for row in self.handler.get_all_rows():
             print(str(row[0]) + " >> " + str(row[-1]))
 
+    def start_consumption(self):
+        self.channel.basic_consume(
+            queue="event_notifications", on_message_callback=self.callback, auto_ack=True
+        )
 
-graph = GraphConnections()
-nx_graph = graph.create_graph()
-graph.update_cluster_ids(nx_graph)
-# connected_list = [len(c) for c in sorted(nx.conneגcted_components(nx_graph), key=len, reverse=True)]
-# for c in nac.connected_components(nx_graph):
-#     print(c)
-#     print(type(c))
-
-# nx.draw_networkx(connected_list)
-# plt.show()
+        self.channel.start_consuming()
