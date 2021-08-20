@@ -1,9 +1,9 @@
 from flask_app.Backend.Parsers.ynet_parser import YnetParser
 from flask_app.Backend.Parsers.maariv_parser import MaarivParser
-from flask_app.Backend.Parsers import N12Parser
-from flask_app.Backend.Parsers import WallaParser
+from flask_app.Backend.Parsers.N12_parser import N12Parser
+from flask_app.Backend.Parsers.walla_worker import WallaParser
 import pika
-from DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
 import json
 
 
