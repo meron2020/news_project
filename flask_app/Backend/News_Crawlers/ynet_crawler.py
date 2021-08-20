@@ -28,9 +28,7 @@ class YnetCrawler(BasicCrawler):
             article_tabs_div = soup.find_all("div", {"class": "ArticleHeadlinesAuto"})
             all_page_link_lists = []
             for div in article_tabs_div:
-                topic = div.find("div", {"class": "TabComponenta"}).find("div",
-                                                                                         {
-                                                                                             "class": "rightTitleText"}).get_text()
+                topic = div.find("div", {"class": "TabComponenta"}).find("div", {"class": "rightTitleText"}).get_text()
                 slots = div.find("div", {"class": "slotsContent"})
                 div_links = slots.find_all("a")
                 for link in div_links:
