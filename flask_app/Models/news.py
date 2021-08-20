@@ -11,13 +11,15 @@ class NewsModel:
         return conn
 
     @classmethod
-    def select_all_rows(cls):
+    def select_all_topic_rows(cls, topic):
         conn = NewsModel.create_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM {}".format("articles"))
         rows_list = []
+
+        cur.execute("SELECT * FROM {} WHERE topic={}".format("articles", '"' + topic + '"'))
         rows = cur.fetchall()
         for row in rows:
             rows_list.append({"newspaper": row[2], "url": row[1], "topic": row[4],
                               "title": row[5], "cluster_id": row[6]})
+
         return rows_list
