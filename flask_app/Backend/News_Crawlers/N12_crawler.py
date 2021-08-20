@@ -22,20 +22,21 @@ class N12Crawler(BasicCrawler):
         for link in self.root_links:
             html = requests.get(link).text
             soup = BeautifulSoup(html, 'html.parser')
-            figure_tags = soup.find_all("figure")
+            figure_tags = soup.find("ul", {"class": "grid-ordering mainItem6"})
             counter = 0
-            for tag in figure_tags:
-                while counter < 7:
-                    try:
-                        link = tag.a['href']
-                        news_link = "https://www.mako.co.il" + link
-                        for topic_key in self.topic_dict.keys():
-                            if topic_key in news_link:
-                                self.news_links.append([news_link, self.topic_dict[topic_key]])
+            for tag in list(figure_tags.descendants):
+                try:
+                    link = tag.p.strong.a['href']
+                    news_link = "https://www.mako.co.il" + link
+                    for topic_key in self.topic_dict.keys():
+                        if topic_key in news_link:
+                            mako_article = [news_link, self.topic_dict[topic_key]]
+                            if mako_article not in self.news_links:
+                                self.news_links.append(mako_article)
 
-                        counter += 1
-                    except Exception:
-                        pass
+                    counter += 1
+                except Exception:
+                    pass
 
         # print(self.news_links)
         # print(len(self.news_links))
