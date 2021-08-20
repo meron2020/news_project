@@ -23,7 +23,7 @@ def create_tables():
 # def serve():
 #     return send_from_directory()
 
-api.add_resource(News, '/news')
+api.add_resource(News, '/news/<string:topic>')
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
