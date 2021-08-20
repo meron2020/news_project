@@ -2,7 +2,7 @@ import sqlite3
 import pika
 import json
 import random
-from DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
 
 
 class DatabaseHandler:
@@ -28,6 +28,8 @@ class DatabaseHandler:
         self.create_topic_dict()
 
     def insert_article(self, newspaper, url, full_text, topic, title):
+        if topic == "צבא ובטחון":
+            topic = "צבא וביטחון"
         try:
             sqlite_insert_query = """INSERT INTO {}
             (newspaper, url, full_text, topic, title, cluster_id)
