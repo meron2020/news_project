@@ -1,8 +1,8 @@
 import pika
 import json
-from DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
 from flask_app.Backend.HebrewMorphologyEngine.morphology_engine import HebrewMorphologyEngine
-from DatabaseHandlers.cache_queue_publisher import CacheQueuePublisher
+from flask_app.Backend.DatabaseHandlers.cache_queue_publisher import CacheQueuePublisher
 
 
 class MorphologyEngineWorker:
@@ -35,7 +35,6 @@ class MorphologyEngineWorker:
                     base_words.append(self.word_dict[word])
                 else:
                     unmorphed_list.append(word)
-            print(len(unmorphed_list))
             text = ' '.join(unmorphed_list)
             hebrew_morph_dict = engine.return_hebrew_morph_dict(text)
             for value in hebrew_morph_dict.values():
