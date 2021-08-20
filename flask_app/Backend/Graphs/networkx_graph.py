@@ -3,7 +3,7 @@ import json
 import networkx as nx
 import networkx.algorithms.components as nac
 from flask_app.Backend.NLP.nlp_algorithms import NLPProcessor
-from DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
+from flask_app.Backend.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
 import pika
 
 
@@ -54,6 +54,8 @@ class GraphConnections:
         self.handler.update_cluster_ids(cluster_id_dict)
         for row in self.handler.get_all_rows():
             print(str(row[0]) + " >> " + str(row[-1]))
+
+        exit(code=0)
 
     def start_consumption(self):
         self.channel.basic_consume(
