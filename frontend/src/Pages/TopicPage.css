@@ -1,0 +1,12 @@
+.topicTitle {
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+    padding-bottom: 20px;
+}
+
+.NewsTopics {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
