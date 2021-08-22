@@ -1,12 +1,16 @@
-const ServerConnection = {
-    url: "http://localhost:5000/",
+const fetch = require('node-fetch')
 
-    async getNews() {
+
+const ServerConnection = {
+    url: "http://127.0.0.1:5000/",
+
+    async getNews(topic) {
         try {
-            const response = await fetch(`${ServerConnection.url}news/`,
-                {headers: {"connection": "keep-alive", "content-type": "application/json"}})
+            const response = await fetch(`${ServerConnection.url}news/${topic}`,
+                {headers: {"connection": "keep-alive"}})
             if (response.ok) {
-                return await response.json()
+                let responseJson =  await response.json();
+                return responseJson["rows_list"];
             }
             throw new Error("Request failed!");
         }
@@ -14,4 +18,5 @@ const ServerConnection = {
             document.write(error)
         }
         }
-    }
+}
+export default ServerConnection
