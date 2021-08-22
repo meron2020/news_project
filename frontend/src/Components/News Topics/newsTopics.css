@@ -1,0 +1,8 @@
+.NewsTopicList {
+    display: flex;
+    padding-top: 40px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+}
