@@ -1,0 +1,22 @@
+.NewsArticle {
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    padding-left: 20px;
+    align-items: center;
+    justify-content: right;
+    display: flex;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 30px;
+}
+
+.NewsArticleWithLink a{
+    color: black;
+    text-decoration: none;
+}
+
+.NewsArticleWithLink a:hover {
+    color: black;
+    text-decoration: underline;
+}
