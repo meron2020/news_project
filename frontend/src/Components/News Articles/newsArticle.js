@@ -1,5 +1,4 @@
 import React from "react";
-import {Row, Col} from 'reactstrap';
 import './newsArticle.css'
 
 
@@ -13,7 +12,7 @@ class NewsArticle extends React.Component {
             <a href={this.props.article["url"]}>
             <div className="NewsArticle">
                 <article>
-                        <h3>{this.props.article["title"]}</h3>
+                        <h5>{this.props.article["title"]}</h5>
                         <h6>{this.props.article["newspaper"]}</h6>
                 </article>
             </div>
