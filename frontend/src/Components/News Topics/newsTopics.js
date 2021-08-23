@@ -2,6 +2,7 @@ import React from "react";
 import NewsArticle from "../News Articles/newsArticle";
 import {Row} from 'reactstrap';
 import ServerConnection from "../../serverConnection";
+import ClusterId from "../News Clusters/newsClusters";
 
 
 class NewsTopics extends React.Component {
@@ -10,23 +11,38 @@ class NewsTopics extends React.Component {
         this.topicName = props.topicName
         this.state = {
             articleList:[],
-            NewsArticleComponentList: []
+            NewsArticlesClustersDict: {},
+            ClusterDictFilled: false
         }
         this.getTopicNews = this.getTopicNews.bind(this)
-        this.addArticlesToList = this.addArticlesToList.bind(this)
-
+        this.addElementToClusterDict = this.addElementToClusterDict.bind(this)
 
     }
 
-    addArticlesToList() {
-        this.state.articleList.forEach((item, index) => {
-            this.setState( {
-            NewsArticleComponentList: this.state.NewsArticleComponentList.concat([<NewsArticle article={item}/>])})
-        })
+    addElementToClusterDict(cluster ,element) {
+        if (cluster in this.state.NewsArticlesClustersDict) {
+            let newsArticleDict = this.state.NewsArticlesClustersDict
+            newsArticleDict[cluster].push(element)
+            this.setState({NewsArticleClusterDict:newsArticleDict})
+        }
+        else {
+            let newsArticleDict = this.state.NewsArticlesClustersDict
+            newsArticleDict[cluster] = [element]
+            this.setState({NewsArticleClusterDict:newsArticleDict})
+        }
+
+    }
+
+    splitArticlesToClusters() {
+        this.state.articleList.map((item, index) =>
+            this.addElementToClusterDict(item['cluster_id'], item))
+
+        this.setState({ClusterDictFilled:true})
     }
 
      async componentDidMount() {
         await this.getTopicNews().then(news => this.setState({articleList: news}))
+         this.splitArticlesToClusters()
     }
 
     async getTopicNews() {
@@ -34,14 +50,18 @@ class NewsTopics extends React.Component {
 
 
     render() {
-        if (this.state.articleList.length === 0) {
+        if (this.state.ClusterDictFilled === false) {
             return (
                 <span>Loading Articles ... </span>
             )}
-        let articleList = this.state.articleList.map((item, index) => (<NewsArticle key={index} article={item}/>))
+
+        let clustersList = []
+        for (const [key, value] of Object.entries(this.state.NewsArticlesClustersDict)) {
+            clustersList.push(<ClusterId id_cluster={value}/>)
+        }
         return (
             <div className="NewsTopicList">
-                {articleList}
+                {clustersList}
             </div>
     )
     }
