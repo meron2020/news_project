@@ -1,13 +1,10 @@
 .NewsArticle {
     width: 100%;
     padding-top: 20px;
-    padding-bottom: 40px;
     padding-left: 20px;
     align-items: center;
     justify-content: right;
     display: flex;
-    border: 1px solid black;
-    border-radius: 5px;
     margin: 30px;
 }
 
