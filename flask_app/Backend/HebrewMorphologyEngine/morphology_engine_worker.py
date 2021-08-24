@@ -17,16 +17,8 @@ class MorphologyEngineWorker:
         self.publisher = QueuePublisher("database")
         self.cache_publisher = CacheQueuePublisher()
 
-    def callback(self, ch, method, properties, body):
-        body = body.decode("utf-8")
-        body = json.loads(body)
-        if type(body) == int:
-            self.publisher.send_article_amount(body)
-            return
-
-        try:
-            engine = HebrewMorphologyEngine()
-            text = body[2]
+    def morph(self, body, engine, id_number):
+            text = body[id_number]
             text_list = text.split()
             base_words = []
             unmorphed_list = []
@@ -40,10 +32,23 @@ class MorphologyEngineWorker:
             for value in hebrew_morph_dict.values():
                 base_words.append(value)
             full_text = ' '.join(base_words)
-            self.publisher.insert_data_to_queue(body[0], body[1], full_text, body[3], body[4])
             for key, value in hebrew_morph_dict.items():
                 self.cache_publisher.insert_data_to_queue(key, value)
-            print("[+] Morphed text - {}".format(body[1]))
+            return full_text
+
+    def callback(self, ch, method, properties, body):
+        body = body.decode("utf-8")
+        body = json.loads(body)
+        if type(body) == int:
+            self.publisher.send_article_amount(body)
+            return
+        engine = HebrewMorphologyEngine()
+
+        try:
+            text = self.morph(body, engine, 2)
+            morphed_title = self.morph(body, engine, 4)
+            self.publisher.insert_morphed_data_to_queue(body[0], body[1], text, body[3], body[4], morphed_title)
+            print("[+] Morphed text and title - {}".format(body[1]))
 
         except Exception as e:
             print(e)
