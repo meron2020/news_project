@@ -27,14 +27,15 @@ class DatabaseHandler:
 
         self.create_topic_dict()
 
-    def insert_article(self, newspaper, url, full_text, topic, title):
+    def insert_article(self, newspaper, url, full_text, topic, title, morphed_title):
         if topic == "צבא ובטחון":
             topic = "צבא וביטחון"
         try:
             sqlite_insert_query = """INSERT INTO {}
-            (newspaper, url, full_text, topic, title, cluster_id)
+            (newspaper, url, full_text, topic, title, morphed_title, cluster_id)
             VALUES
-            ('{}', '{}', '{}', '{}', '{}', NULL);""".format(self.table_name, newspaper, url, full_text, topic, title)
+            ('{}', '{}', '{}', '{}', '{}', '{}' ,NULL);""".format(self.table_name, newspaper, url, full_text, topic,
+                                                                  title, morphed_title)
             count = self.cursor.execute(sqlite_insert_query)
             self.connection.commit()
             self.articles_inserted_num += 1
@@ -80,7 +81,7 @@ class DatabaseHandler:
         elif type(body) == int:
             self.article_amount = body
         else:
-            _id = self.insert_article(body[0], body[1], body[2], body[3], body[4])
+            _id = self.insert_article(body[0], body[1], body[2], body[3], body[4], body[5])
             # cluster_id = self.random_clustering(body[3])
             # self.update_cluster_id(_id, cluster_id)
             self.articles_sent += 1
