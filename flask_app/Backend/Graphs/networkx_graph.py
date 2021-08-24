@@ -20,11 +20,16 @@ class GraphConnections:
     def create_NLP(self):
         self.processor = NLPProcessor()
         self.id_to_text_dict, self.id_to_tuple_dict = self.processor.get_id_to_text_dict()
+        self.processor.get_id_to_title_dict()
 
     def find_top_similarities(self):
-        dense_list = self.processor.sklearn_vectorize()
-        similarity_dict = NLPProcessor.turn_vectors_to_dict(dense_list)
-        return similarity_dict
+        texts_dense_list = self.processor.sklearn_vectorize_texts()
+        texts_similarity_dict = NLPProcessor.turn_vectors_to_dict(texts_dense_list)
+        texts_top_similarities = NLPProcessor.find_top_similarities(texts_similarity_dict, 0.175)
+        title_dense_list = self.processor.sklearn_vectorize_title()
+        title_similarity_dict = NLPProcessor.turn_vectors_to_dict(title_dense_list)
+        title_top_similarities = NLPProcessor.find_top_similarities(title_similarity_dict, 0.125)
+        return texts_top_similarities, title_top_similarities
 
     def callback(self, ch, method, properties, body):
         body = body.decode("utf-8")
@@ -34,16 +39,13 @@ class GraphConnections:
             nx_graph = self.create_graph()
             self.update_cluster_ids(nx_graph)
 
+        exit(0)
+
     def create_graph(self):
         G = nx.Graph()
-        similarity_dict = self.find_top_similarities()
-        for text_id in self.id_to_text_dict:
-            G.add_node(text_id)
-        for key, value in similarity_dict.items():
-            for other_id, similarity in value.items():
-                if similarity > 0.175:
-                    G.add_edge(key, other_id)
-        return G
+        texts_top_similarities, title_top_similarities = self.find_top_similarities()
+        graph = self.processor.get_average_similarity(title_top_similarities, texts_top_similarities, G)
+        return graph
 
     def update_cluster_ids(self, nx_graph):
         cluster_id_dict = {}
