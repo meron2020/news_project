@@ -9,7 +9,7 @@ class MainNewsArticle extends React.Component {
     render() {
         return (
             <div className="NewsArticleWithLink">
-                <a href={this.props.article["url"]}>
+                <a href={this.props.article["url"]} target="_blank" rel="noreferrer noopener">
                     <div className="NewsArticle">
                         <article>
                             <h3>{this.props.article["title"]}</h3>
