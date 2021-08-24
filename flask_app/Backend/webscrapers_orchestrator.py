@@ -21,3 +21,8 @@ class WebscrapersOrchestrator:
         crawler_handler = CrawlersHandler()
         crawler_thread = threading.Thread(target=crawler_handler.crawl_links, args=())
         crawler_thread.start()
+
+
+if __name__ == "__main__":
+    orchestrator = WebscrapersOrchestrator()
+    orchestrator.run_orchestrator()
