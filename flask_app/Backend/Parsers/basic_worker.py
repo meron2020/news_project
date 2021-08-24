@@ -10,7 +10,8 @@ class BasicParser:
         r = requests.get(self.url)
         return r.text
 
-    def remove_punctuation(self, text):
+    @classmethod
+    def remove_punctuation(cls, text):
         text = text.replace("'", "")
         text = text.replace('"', "")
         for punc in punctuation:
