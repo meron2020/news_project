@@ -5,6 +5,7 @@ from flask_app.Backend.Parsers.walla_worker import WallaParser
 import pika
 from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
 import json
+from flask_app.Backend.Parsers.basic_worker import BasicParser
 
 
 class QueueWorker:
@@ -46,6 +47,7 @@ class QueueWorker:
                 topic = worker.topic_parse()
             full_text, title = worker.parse()
             full_text = ' '.join(full_text.split()[:50])
+            title = BasicParser.remove_punctuation(title)
             self.morphology_queue_handler.insert_data_to_queue(newspaper, url, full_text, topic, title)
         #       worker.print_acknowledgement(newspaper)
 
