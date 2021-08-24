@@ -12,6 +12,15 @@ class QueuePublisher:
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=self.queue_name, durable=True)
 
+    def insert_morphed_data_to_queue(self, newspaper, url, full_text, topic, title, morphed_title):
+        payload = json.dumps([newspaper, url, full_text, topic, title, morphed_title])
+
+        self.channel.basic_publish(
+            exchange='',
+            routing_key=self.queue_name,
+            body=payload
+        )
+
     def insert_data_to_queue(self, newspaper, url, full_text, topic, title):
         payload = json.dumps([newspaper, url, full_text, topic, title])
 
