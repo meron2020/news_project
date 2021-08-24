@@ -31,7 +31,7 @@ class ClusterId extends React.Component {
                 <div className="button-full-coverage">
                     {(this.state.showCoverageButton && this.props.id_cluster.length > 2) &&
                     <button onClick={this.showMore}>
-                        Full Coverage
+                        הראה שאר כתבות
                     </button>}
                 </div>
             </div>
