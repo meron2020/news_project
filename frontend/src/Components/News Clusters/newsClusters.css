@@ -4,8 +4,11 @@
     margin-bottom: 20px;
 }
 .button-full-coverage {
-    padding-left: 40px;
+    padding-right: 30px;
     padding-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+
 }
 
 .button-full-coverage button {
