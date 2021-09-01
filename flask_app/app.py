@@ -7,7 +7,7 @@ from Resources.news import News
 from Resources.score_logs import ScoreLogs
 from flask_cors import CORS
 
-app = Flask(__name__, static_url_path='', static_folder='frontend/build')
+app = Flask(__name__, static_url_path='', static_folder='../frontend/build')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 
@@ -16,16 +16,6 @@ api = Api(app)
 
 CORS(app)
 
-
-@app.before_first_request
-def create_tables():
-    db.init_app(app)
-    db.create_all()
-
-
-# @app.route('/')
-# def serve():
-#     return send_from_directory()
 
 api.add_resource(News, '/news/<string:topic>')
 api.add_resource(ScoreLogs, '/score_logs/')
