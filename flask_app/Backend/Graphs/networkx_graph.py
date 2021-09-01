@@ -1,10 +1,14 @@
 import json
-
+import plotly.graph_objects as go
 import networkx as nx
 import networkx.algorithms.components as nac
+from googleapiclient import discovery
+
 from flask_app.Backend.NLP.nlp_algorithms import NLPProcessor
 from flask_app.Backend.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
 import pika
+from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
+import pandas as pd
 
 
 class GraphConnections:
@@ -17,9 +21,9 @@ class GraphConnections:
         self.id_to_text_dict = ""
         self.id_to_tuple_dict = ""
 
-    def create_NLP(self):
+    def create_NLP(self, path):
         self.processor = NLPProcessor()
-        self.id_to_text_dict, self.id_to_tuple_dict = self.processor.get_id_to_text_dict()
+        self.id_to_text_dict, self.id_to_tuple_dict = self.processor.get_id_to_text_dict(path)
         self.processor.get_id_to_title_dict()
 
     def find_top_similarities(self):
@@ -35,29 +39,73 @@ class GraphConnections:
         body = body.decode("utf-8")
         body = json.loads(body)
         if body == "Finished Webscraping":
-            self.create_NLP()
-            nx_graph = self.create_graph()
-            self.update_cluster_ids(nx_graph)
+            compute = discovery.build('compute', 'v1')
+            request = compute.instances().stop(project="sonic-shuttle-322109", zone="europe-west6-a",
+                                                instance="instance-1")
+            request.execute()
+            self.create_NLP(r"../../news_texts.db")
+            nx_graph = self.create_graph(r"../../news_texts.db")
+            self.update_cluster_ids(nx_graph, r"../../news_texts.db")
+        return
 
-        exit(0)
-
-    def create_graph(self):
+    def create_graph(self, path):
         G = nx.Graph()
         texts_top_similarities, title_top_similarities = self.find_top_similarities()
-        graph = self.processor.get_average_similarity(title_top_similarities, texts_top_similarities, G)
+        graph = self.processor.get_average_similarity(title_top_similarities, texts_top_similarities, G, path)
         return graph
 
-    def update_cluster_ids(self, nx_graph):
+    def update_cluster_ids(self, nx_graph, path):
         cluster_id_dict = {}
         cluster_number = 0
         for cluster_set in (nac.connected_components(nx_graph)):
             cluster_id_dict[cluster_number] = cluster_set
             cluster_number += 1
-        self.handler.update_cluster_ids(cluster_id_dict)
-        for row in self.handler.get_all_rows():
-            print(str(row[0]) + " >> " + str(row[-1]))
+        self.handler.update_cluster_ids(cluster_id_dict, path)
 
-        exit(code=0)
+    def get_url_to_url_score(self, path):
+        url_to_url_score = {
+            # "first_url": [],
+            # "second_url": [],
+            "first_title": [],
+            "second_title": [],
+            "title_score": [],
+            "text_score": [],
+            "score": []
+        }
+        article_dict = self.handler.get_all_rows_for_graph(path)
+        for score_row in self.handler.get_all_rows_from_scores(path):
+            first_url = article_dict[score_row[0]][1]
+            second_url = article_dict[score_row[1]][1]
+            first_title = article_dict[score_row[0]][5]
+            second_title = article_dict[score_row[1]][5]
+            # url_to_url_score["first_url"].append(first_url)
+            # url_to_url_score["second_url"].append(second_url)
+            url_to_url_score["first_title"].append(first_title)
+            url_to_url_score["second_title"].append(second_title)
+            url_to_url_score["title_score"].append(score_row[4])
+            url_to_url_score["text_score"].append(score_row[5])
+            url_to_url_score["score"].append(score_row[6])
+        return url_to_url_score
+
+    def show_df_url_to_url(self, path):
+        url_to_url_score = self.get_url_to_url_score(path)
+        df = pd.DataFrame(url_to_url_score)
+        fig = go.Figure(data=[go.Table(
+            header=dict(values=list(df.columns),
+                        fill_color='paleturquoise',
+                        align='left'),
+            cells=dict(values=[
+                # df.first_url, df.second_url,
+                df.first_title,
+                df.second_title, df.title_score, df.text_score, df.score],
+                fill_color='lavender',
+                align='right',
+                font_size=14,
+                height=30
+            ))
+        ])
+
+        fig.show()
 
     def start_consumption(self):
         self.channel.basic_consume(
@@ -65,3 +113,11 @@ class GraphConnections:
         )
 
         self.channel.start_consuming()
+
+
+if __name__ == "__main__":
+    graph_connections = GraphConnections()
+    graph_connections.create_NLP(r"../../../news_texts.db")
+    nx_graph = graph_connections.create_graph(r"../../../news_texts.db")
+    graph_connections.update_cluster_ids(nx_graph, r"../../../news_texts.db")
+    graph_connections.show_df_url_to_url(r"../../../news_texts.db")
