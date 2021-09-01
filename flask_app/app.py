@@ -4,6 +4,7 @@ from flask_jwt import JWT
 from datetime import timedelta
 from flask_app.db import db
 from Resources.news import News
+from Resources.score_logs import ScoreLogs
 from flask_cors import CORS
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
@@ -27,6 +28,7 @@ def create_tables():
 #     return send_from_directory()
 
 api.add_resource(News, '/news/<string:topic>')
+api.add_resource(ScoreLogs, '/score_logs/')
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
