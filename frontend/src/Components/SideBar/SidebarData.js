@@ -5,6 +5,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import GavelIcon from '@material-ui/icons/Gavel';
 import SecurityIcon from '@material-ui/icons/Security';
 import HomeIcon from '@material-ui/icons/Home';
+import ScoreIcon from '@material-ui/icons/Score';
 import FlagIcon from '@material-ui/icons/Flag';
 import PolicyIcon from '@material-ui/icons/Policy';
 export const SidebarData = [
@@ -14,6 +15,8 @@ export const SidebarData = [
         path: "/military",
         cName: 'nav-text'
     },
+
+
     {
         title: "World",
         icon: <PublicIcon/>,
@@ -49,6 +52,13 @@ export const SidebarData = [
         title: "Health and Education",
         icon: <LocalHospitalIcon/>,
         path: "/health_and_education",
+        cName: 'nav-text'
+    },
+
+    {
+        title: "Score Logs",
+        icon: <ScoreIcon/>,
+        path: "/score_logs",
         cName: 'nav-text'
     },
 ]

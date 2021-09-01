@@ -1,6 +1,6 @@
 import React from "react";
 import {Row, Col} from 'reactstrap';
-import "../App.css"
+import "../../App.css"
 import {SidebarData} from "./SidebarData";
 
 function Sidebar() {
