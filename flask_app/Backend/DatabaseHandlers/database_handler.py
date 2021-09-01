@@ -53,6 +53,21 @@ class DatabaseHandler:
             print("Failed to insert data into sqlite table", error)
         return self.cursor.lastrowid
 
+    def insert_article_scores(self, first_id, second_id, first_title, second_title, title_score, text_score,
+                              total_score):
+        try:
+            sqlite_insert_query = """INSERT INTO {}
+            (first_id, second_id, first_title, second_title, title_score, text_score, total_score)
+            VALUES
+            ('{}', '{}', '{}', '{}', '{}', '{}', '{}');""".format(self.table_name, first_id, second_id, first_title,
+                                                                  second_title, title_score, text_score,
+                                                                  total_score)
+            count = self.cursor.execute(sqlite_insert_query)
+            self.connection.commit()
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        return
+
     def find_articles_inserted_num(self):
         sqlite_insert_query = "SELECT COUNT(*) FROM articles"
         self.cursor.execute(sqlite_insert_query)
@@ -153,6 +168,11 @@ class DatabaseHandler:
         self.connection.commit()
         print(len(self.select_all_rows()))
 
+    def delete_all_score_rows(self):
+        sqlite_insert_query = "DELETE FROM {}".format(self.table_name)
+        count = self.cursor.execute(sqlite_insert_query)
+        self.connection.commit()
+
     def get_url_by_id(self, _id):
         sqlite_insert_query = "SELECT url FROM {} WHERE id = {}".format(self.table_name, _id)
         count = self.cursor.execute(sqlite_insert_query)
@@ -160,3 +180,11 @@ class DatabaseHandler:
 
         url = self.cursor.fetchone()
         return url
+
+    def get_title_by_id(self, _id):
+        sqlite_insert_query = "SELECT title FROM {} WHERE id = {}".format(self.table_name, _id)
+        count = self.cursor.execute(sqlite_insert_query)
+        self.connection.commit()
+
+        title = self.cursor.fetchone()
+        return title
