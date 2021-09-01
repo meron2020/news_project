@@ -21,8 +21,8 @@ class NLPProcessor:
         self.used_titles = []
         self.tfidf_dict = {}
 
-    def get_id_to_text_dict(self):
-        rows_tuple_list = self.handler.get_all_rows_for_nlp()
+    def get_id_to_text_dict(self, path):
+        rows_tuple_list = self.handler.get_all_rows_for_nlp(path)
         for row in rows_tuple_list:
             self.id_to_text_dict[str(row[0])] = row[3]
             self.id_to_tuple_dict[str(row[0])] = row
@@ -175,17 +175,25 @@ class NLPProcessor:
 
     print("\n")
 
-    def get_average_similarity(self, titles_similarities, texts_similarities, graph):
-        average_score_dict = {}
+    def get_average_similarity(self, titles_similarities, texts_similarities, graph, path):
+        articles_dict = self.handler.get_all_rows_for_graph(path)
         for _id in titles_similarities.keys():
             graph.add_node(_id)
         for _id, similar_articles in titles_similarities.items():
             new_id_score_dict = {}
+            first_title = articles_dict[int(_id)][4]
             for other_id, score in similar_articles.items():
+                second_title = articles_dict[int(other_id)][4]
                 try:
-                    score = (score * 0.7 + texts_similarities[_id][other_id] * 0.3)
+                    title_score = score * 0.7
+                    text_score = texts_similarities[_id][other_id] * 0.3
+                    score = title_score + text_score
                 except KeyError:
                     score = score * 0.7
+                    title_score = score
+                    text_score = 0
+                self.handler.insert_scores(int(_id), int(other_id), first_title, second_title, title_score, text_score,
+                                           score, path)
                 if score > 0.12:
                     graph.add_edge(_id, other_id)
                     print("Added Node")
