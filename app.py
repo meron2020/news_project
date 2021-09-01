@@ -3,19 +3,16 @@ from flask_restful import Api
 from flask_jwt import JWT
 from datetime import timedelta
 from flask_app.db import db
-from Resources.news import News
-from Resources.score_logs import ScoreLogs
+from flask_app.Resources.news import News
+from flask_app.Resources.score_logs import ScoreLogs
 from flask_cors import CORS
 
-app = Flask(__name__, static_url_path='', static_folder='../frontend/build')
+app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 
 app.secret_key = 'yoav'
 api = Api(app)
-
-CORS(app)
-
 
 api.add_resource(News, '/news/<string:topic>')
 api.add_resource(ScoreLogs, '/score_logs/')
