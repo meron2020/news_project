@@ -30,5 +30,11 @@ def create_tables():
 api.add_resource(News, '/news/<string:topic>')
 api.add_resource(ScoreLogs, '/score_logs/')
 
+
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
