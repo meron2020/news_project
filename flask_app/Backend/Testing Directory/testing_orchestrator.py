@@ -9,11 +9,13 @@ from testing_urls_file import TestingUrlsSender
 class TestingOrchestrator:
     def run_orchestrator(self):
         handler = DatabaseHandlerOrchestrator()
-        handler_thread = threading.Thread(target=handler.run_orchestrator)
-        word_dict = handler.get_all_rows_from_cache()
-        handler_thread.start()
+        score_thread = threading.Thread(target=handler.create_score_db)
+        score_thread.start()
         cache_thread = threading.Thread(target=handler.create_cache_db)
         cache_thread.start()
+        word_dict = handler.get_all_rows_from_cache()
+        handler_thread = threading.Thread(target=handler.run_orchestrator)
+        handler_thread.start()
         morphology_workers = MorphologyWorkersOrchestrator()
         morphology_workers.run_orchestrator(1, word_dict)
         workers = WorkersOrchestrator()
