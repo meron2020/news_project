@@ -1,13 +1,23 @@
+import time
+
 from flask_app.Backend.QueueWorkers.workers_orchestrator import WorkersOrchestrator
 from flask_app.Backend.News_Crawlers.CrawlersHandler import CrawlersHandler
 import threading
 from flask_app.Backend.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
 from flask_app.Backend.HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
+from googleapiclient import discovery
 
 
 class WebscrapersOrchestrator:
     def run_orchestrator(self):
+        compute = discovery.build('compute', 'v1')
+        request = compute.instances().start(project="sonic-shuttle-322109", zone="europe-west6-a",
+                                            instance="instance-1")
+        request.execute()
+        time.sleep(30)
         handler = DatabaseHandlerOrchestrator()
+        score_thread = threading.Thread(target=handler.create_score_db)
+        score_thread.start()
         cache_thread = threading.Thread(target=handler.create_cache_db)
         cache_thread.start()
         word_dict = handler.get_all_rows_from_cache()
