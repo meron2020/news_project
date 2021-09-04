@@ -25,9 +25,12 @@ class DatabaseHandlerOrchestrator:
         table_name = "scores"
         handler = DatabaseHandler(connection, cursor, table_name)
         print("Successfully Connected to scores DB Table")
-        cursor.execute(
-            "DROP TABLE {}".format(table_name)
-        )
+        try:
+            cursor.execute(
+                "DROP TABLE {}".format(table_name)
+            )
+        except sqlite3.OperationalError:
+            pass
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS scores "
             "(first_id Int, second_id Int, "
