@@ -4,6 +4,8 @@ from flask_app.Resources.news import News
 from flask_app.Resources.score_logs import ScoreLogs
 from flask_cors import CORS
 from flask_app.db import db
+from flask_app.Backend.backend_orchestrator import BackendOrchestrator
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -15,9 +17,13 @@ api = Api(app)
 
 
 @app.before_first_request
-def create_tables():
+def create_tables_and_run_orchestrator():
     db.init_app(app)
     db.create_all()
+    orchestrator = BackendOrchestrator()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=orchestrator.run_orchestrator, trigger="interval", minutes=120)
+    scheduler.start()
 
 
 @app.route('/')
