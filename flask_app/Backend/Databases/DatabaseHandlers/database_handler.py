@@ -3,21 +3,19 @@ import pika
 import json
 import random
 from flask_app.Backend.Databases.DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.Models.article import Article
+from flask_app.Backend.Models.score import Score
 
 
 class DatabaseHandler:
-    def __init__(self, connection, cursor, table_name):
+    def __init__(self):
         self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
         self.channel = self.queue_connection.channel()
         self.result = self.channel.queue_declare(queue='database', durable=True)
-        self.table_name = table_name
         self.publisher = QueuePublisher("event_notifications")
 
         self.topic_dict = {}
-
-        self.connection = connection
-        self.cursor = cursor
 
         self.article_amount = 0
         self.articles_sent = 0
@@ -31,13 +29,8 @@ class DatabaseHandler:
         if topic == "צבא ובטחון":
             topic = "צבא וביטחון"
         try:
-            sqlite_insert_query = """INSERT INTO {}
-            (newspaper, url, full_text, topic, title, morphed_title, cluster_id)
-            VALUES
-            ('{}', '{}', '{}', '{}', '{}', '{}' ,NULL);""".format(self.table_name, newspaper, url, full_text, topic,
-                                                                  title, morphed_title)
-            count = self.cursor.execute(sqlite_insert_query)
-            self.connection.commit()
+            article = Article(newspaper, url, full_text, topic, title, morphed_title, None)
+            article.save_to_db()
             self.articles_inserted_num += 1
             if self.articles_inserted_num % 50 == 0:
                 # print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
@@ -56,29 +49,20 @@ class DatabaseHandler:
     def insert_article_scores(self, first_id, second_id, first_title, second_title, title_score, text_score,
                               total_score):
         try:
-            sqlite_insert_query = """INSERT INTO {}
-            (first_id, second_id, first_title, second_title, title_score, text_score, total_score)
-            VALUES
-            ('{}', '{}', '{}', '{}', '{}', '{}', '{}');""".format(self.table_name, first_id, second_id, first_title,
-                                                                  second_title, title_score, text_score,
-                                                                  total_score)
-            count = self.cursor.execute(sqlite_insert_query)
-            self.connection.commit()
+            score = Score(first_id, second_id, first_title, second_title, title_score, text_score,
+                          total_score)
+            score.save_to_db()
         except sqlite3.Error as error:
             print("Failed to insert data into sqlite table", error)
         return
 
     def find_articles_inserted_num(self):
-        sqlite_insert_query = "SELECT COUNT(*) FROM articles"
-        self.cursor.execute(sqlite_insert_query)
-        cur_result = self.cursor.fetchone()
+        cur_result = Article.count()
         return cur_result
 
     def find_each_newspaper_num(self):
         newspaper_dict = {'ynet': 0, 'maariv': 0, 'walla': 0, 'mako': 0}
-        query = "SELECT * FROM articles"
-        self.cursor.execute(query)
-        cur_result = self.cursor.fetchall()
+        cur_result = self.select_all_articles()
         for result in cur_result:
             for newspaper in newspaper_dict.keys():
                 if newspaper in result[1]:
@@ -126,11 +110,7 @@ class DatabaseHandler:
 
     def update_cluster_id(self, _id, cluster_id):
         try:
-            sqlite_insert_query = """UPDATE {}
-                SET cluster_id = {}
-                WHERE id = {};""".format(self.table_name, ('"' + str(cluster_id) + '"'), _id)
-            count = self.cursor.execute(sqlite_insert_query)
-            self.connection.commit()
+            Article.update_cluster_id(_id, cluster_id)
         except sqlite3.Error as error:
             print(" [-] Failed to insert cluster id.", error)
 
@@ -143,48 +123,35 @@ class DatabaseHandler:
         cluster_ids_str = ",".join(cluster_ids)
         return cluster_ids_str
 
-    def select_all_rows(self):
-        """
-        Query all rows in the tasks table
-        :param conn: the Connection object
-        :return:
-        """
-        self.cursor.execute("SELECT * FROM {}".format(self.table_name))
-
-        rows = self.cursor.fetchall()
-
+    def select_all_articles(self):
+        articles = Article.query.all()
         row_list = []
-        for row in rows:
-            row_list.append(row)
+        for article in articles:
+            article_tuple = (article.id, article.newspaper, article.url, article.full_text,
+                             article.topic, article.title, article.morphed_title, article.cluster_id)
+            row_list.append(article_tuple)
 
         return row_list
 
+    def select_all_scores(self):
+        scores = Score.query.all()
+        row_list = []
+        for score in scores:
+            score_tuple = (score.first_id, score.second_id, score.first_title,
+                           score.second_title, score.title_score, score.text_score, score.total_score)
+
+            row_list.append(score_tuple)
+        return row_list
+
     def delete_all_rows(self):
-        sqlite_insert_query = "DELETE FROM {};".format(self.table_name)
-        delete_key_query = "UPDATE SQLITE_SEQUENCE SET SEQ=0;".format(self.table_name)
-        count = self.cursor.execute(sqlite_insert_query)
-        self.connection.commit()
-        second_count = self.cursor.execute(delete_key_query)
-        self.connection.commit()
-        print(len(self.select_all_rows()))
+        Article.delete_all()
+        # delete_key_query = "UPDATE SQLITE_SEQUENCE SET SEQ=0;".format(self.table_name)
+        # second_count = self.cursor.execute(delete_key_query)
+        # self.connection.commit()
 
     def delete_all_score_rows(self):
-        sqlite_insert_query = "DELETE FROM {}".format(self.table_name)
-        count = self.cursor.execute(sqlite_insert_query)
-        self.connection.commit()
+        Score.delete_all()
 
     def get_url_by_id(self, _id):
-        sqlite_insert_query = "SELECT url FROM {} WHERE id = {}".format(self.table_name, _id)
-        count = self.cursor.execute(sqlite_insert_query)
-        self.connection.commit()
-
-        url = self.cursor.fetchone()
+        url = Article.get_url_by_id(_id)
         return url
-
-    def get_title_by_id(self, _id):
-        sqlite_insert_query = "SELECT title FROM {} WHERE id = {}".format(self.table_name, _id)
-        count = self.cursor.execute(sqlite_insert_query)
-        self.connection.commit()
-
-        title = self.cursor.fetchone()
-        return title
