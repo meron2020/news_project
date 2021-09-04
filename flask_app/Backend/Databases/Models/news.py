@@ -7,7 +7,7 @@ class NewsModel:
 
     @classmethod
     def create_connection(cls):
-        conn = sqlite3.connect(r"../../news_texts.db")
+        conn = sqlite3.connect(r"../../../../news_texts.db")
         return conn
 
     @classmethod

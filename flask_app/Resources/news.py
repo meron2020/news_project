@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_app.Models.news import NewsModel
+from flask_app.Backend.Databases.Models import NewsModel
 
 
 class News(Resource):

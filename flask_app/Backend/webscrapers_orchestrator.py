@@ -1,10 +1,10 @@
 import time
 
-from flask_app.Backend.QueueWorkers.workers_orchestrator import WorkersOrchestrator
-from flask_app.Backend.News_Crawlers.CrawlersHandler import CrawlersHandler
+from flask_app.Backend.Webscraping.QueueWorkers.workers_orchestrator import WorkersOrchestrator
+from flask_app.Backend.Webscraping.News_Crawlers.CrawlersHandler import CrawlersHandler
 import threading
-from flask_app.Backend.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
-from flask_app.Backend.HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
+from flask_app.Backend.Databases.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
+from flask_app.Backend.Webscraping.HebrewMorphologyEngine.morphology_workers_orchestrator import MorphologyWorkersOrchestrator
 from googleapiclient import discovery
 
 

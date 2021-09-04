@@ -2,7 +2,7 @@ import sqlite3
 import pika
 import json
 import random
-from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.Databases.DatabaseHandlers.queue_publisher import QueuePublisher
 
 
 class DatabaseHandler:

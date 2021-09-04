@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_app.Models.score_logs import ScoreLogsModel
+from flask_app.Backend.Databases.Models import ScoreLogsModel
 
 
 class ScoreLogs(Resource):

@@ -10,7 +10,7 @@
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
       <list>
-        <option value="$MODULE_DIR$/flask_app/Backend/QueueWorkers" />
+        <option value="$MODULE_DIR$/flask_app/Backend/Webscraping/QueueWorkers" />
       </list>
     </option>
   </component>

@@ -4,10 +4,9 @@ import networkx as nx
 import networkx.algorithms.components as nac
 from googleapiclient import discovery
 
-from flask_app.Backend.NLP.nlp_algorithms import NLPProcessor
-from flask_app.Backend.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
+from flask_app.Backend.Clustering.NLP.nlp_algorithms import NLPProcessor
+from flask_app.Backend.Databases.DatabaseHandlers.database_handler_orchestrator import DatabaseHandlerOrchestrator
 import pika
-from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
 import pandas as pd
 
 

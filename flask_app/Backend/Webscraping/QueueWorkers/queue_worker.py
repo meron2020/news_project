@@ -1,11 +1,11 @@
-from flask_app.Backend.Parsers.ynet_parser import YnetParser
-from flask_app.Backend.Parsers.maariv_parser import MaarivParser
-from flask_app.Backend.Parsers.N12_parser import N12Parser
-from flask_app.Backend.Parsers.walla_worker import WallaParser
+from flask_app.Backend.Webscraping.Parsers.ynet_parser import YnetParser
+from flask_app.Backend.Webscraping.Parsers.maariv_parser import MaarivParser
+from flask_app.Backend.Webscraping.Parsers.N12_parser import N12Parser
+from flask_app.Backend.Webscraping.Parsers.walla_worker import WallaParser
 import pika
-from flask_app.Backend.DatabaseHandlers.queue_publisher import QueuePublisher
+from flask_app.Backend.Databases.DatabaseHandlers.queue_publisher import QueuePublisher
 import json
-from flask_app.Backend.Parsers.basic_worker import BasicParser
+from flask_app.Backend.Webscraping.Parsers.basic_worker import BasicParser
 
 
 class QueueWorker:
