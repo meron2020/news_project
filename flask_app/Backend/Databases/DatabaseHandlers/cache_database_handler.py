@@ -1,42 +1,29 @@
 import json
 import sqlite3
-
+from flask_app.Backend.Models.morphed import Morphed
 import pika
 
 
 class CacheDatabaseHandler:
-    def __init__(self, connection, cursor, table_name):
-        self.connection = connection
-        self.cursor = cursor
-        self.table_name = table_name
+    def __init__(self):
 
         self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
         self.channel = self.queue_connection.channel()
         self.result = self.channel.queue_declare(queue='morphology_cache', durable=True)
-        self.table_name = table_name
-        self.connection = connection
-        self.cursor = cursor
 
     def insert_morphology_words(self, word, morphed_word):
-        word = '"' + word + '"'
-        morphed_word = '"' + morphed_word + '"'
         try:
-            sqlite_insert_query = """INSERT INTO {} (word, morphed_word) VALUES ({}, {});""".format(self.table_name,
-                                                                                                    word, morphed_word)
-            count = self.cursor.execute(sqlite_insert_query)
-            self.connection.commit()
+            morphed = Morphed(word, morphed_word)
+            morphed.save_to_db()
         except sqlite3.Error as error:
             print("Failed to insert data into sqlite table", error)
 
     def return_word_to_morph_dict(self):
-        self.cursor.execute("SELECT * FROM {}".format(self.table_name))
-
-        rows = self.cursor.fetchall()
-
+        morphed_words = Morphed.query.all()
         morphology_cache = {}
-        for row in rows:
-            morphology_cache[row[0]] = row[1]
+        for morphed in morphed_words:
+            morphology_cache[morphed.word] = morphed.morphed_word
         return morphology_cache
 
     def callback(self, ch, method, properties, body):
