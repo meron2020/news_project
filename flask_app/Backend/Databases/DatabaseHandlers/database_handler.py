@@ -3,12 +3,14 @@ import pika
 import json
 import random
 from flask_app.Backend.Databases.DatabaseHandlers.queue_publisher import QueuePublisher
-from flask_app.Backend.Models.article import Article
-from flask_app.Backend.Models.score import Score
+# from flask_app.Backend.Models.article import Article
+# from flask_app.Backend.Models.score import Score
+from ..PostgreSQL.postgresql_connection import PostgresConnection
 
 
 class DatabaseHandler:
     def __init__(self):
+        self.post_connection = PostgresConnection()
         self.queue_connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
         self.channel = self.queue_connection.channel()
@@ -29,8 +31,10 @@ class DatabaseHandler:
         if topic == "צבא ובטחון":
             topic = "צבא וביטחון"
         try:
-            article = Article(newspaper, url, full_text, topic, title, morphed_title, None)
-            article.save_to_db()
+            sqlite_query = PostgresConnection.create_article_insertion(newspaper, url, full_text, topic, title,
+                                                                       morphed_title)
+            self.post_connection.execute_query(sqlite_query)
+            print("[+] Inserted Article")
             self.articles_inserted_num += 1
             if self.articles_inserted_num % 50 == 0:
                 # print(" [+] {} articles inserted successfully.".format(self.find_articles_inserted_num()))
@@ -44,21 +48,24 @@ class DatabaseHandler:
         except sqlite3.Error as error:
             self.articles_not_inserted_num += 1
             print("Failed to insert data into sqlite table", error)
-        return self.cursor.lastrowid
+        return self.post_connection.cursor.lastrowid
 
     def insert_article_scores(self, first_id, second_id, first_title, second_title, title_score, text_score,
                               total_score):
         try:
-            score = Score(first_id, second_id, first_title, second_title, title_score, text_score,
-                          total_score)
-            score.save_to_db()
+            sqlite_query = PostgresConnection.create_score_insertion(first_id, second_id, first_title, second_title,
+                                                                     title_score, text_score,
+                                                                     total_score)
+            self.post_connection.execute_query(sqlite_query)
         except sqlite3.Error as error:
             print("Failed to insert data into sqlite table", error)
         return
 
     def find_articles_inserted_num(self):
-        cur_result = Article.count()
-        return cur_result
+        sqlite_query = """SELECT COUNT(*) FROM articles"""
+        self.post_connection.execute_query(sqlite_query)
+        articles_inserted = self.post_connection.curser_fetch_one()
+        return articles_inserted
 
     def find_each_newspaper_num(self):
         newspaper_dict = {'ynet': 0, 'maariv': 0, 'walla': 0, 'mako': 0}
@@ -110,7 +117,8 @@ class DatabaseHandler:
 
     def update_cluster_id(self, _id, cluster_id):
         try:
-            Article.update_cluster_id(_id, cluster_id)
+            sqlite_query = """UPDATE articles SET cluster_id={} WHERE id={}""".format(cluster_id, _id)
+            self.post_connection.execute_query(sqlite_query)
         except sqlite3.Error as error:
             print(" [-] Failed to insert cluster id.", error)
 
@@ -124,34 +132,36 @@ class DatabaseHandler:
         return cluster_ids_str
 
     def select_all_articles(self):
-        articles = Article.query.all()
+        sqlite_query = """SELECT * FROM articles"""
+        self.post_connection.execute_query(sqlite_query)
+        articles = self.post_connection.curser_fetch_all()
         row_list = []
         for article in articles:
-            article_tuple = (article.id, article.newspaper, article.url, article.full_text,
-                             article.topic, article.title, article.morphed_title, article.cluster_id)
-            row_list.append(article_tuple)
+            row_list.append(article)
 
         return row_list
 
     def select_all_scores(self):
-        scores = Score.query.all()
+        sqlite_query = """SELECT * FROM score"""
+        self.post_connection.execute_query(sqlite_query)
+        scores = self.post_connection.curser_fetch_all()
         row_list = []
         for score in scores:
-            score_tuple = (score.first_id, score.second_id, score.first_title,
-                           score.second_title, score.title_score, score.text_score, score.total_score)
-
-            row_list.append(score_tuple)
+            row_list.append(score)
         return row_list
 
     def delete_all_rows(self):
-        Article.delete_all()
+        sqlite_query = """DELETE FROM articles"""
+        self.post_connection.execute_query(sqlite_query)
         # delete_key_query = "UPDATE SQLITE_SEQUENCE SET SEQ=0;".format(self.table_name)
+        # self.post_connection.execute_query(delete_key_query)
         # second_count = self.cursor.execute(delete_key_query)
         # self.connection.commit()
 
     def delete_all_score_rows(self):
-        Score.delete_all()
+        sqlite_query = """DELETE FROM score"""
+        self.post_connection.execute_query(sqlite_query)
 
     def get_url_by_id(self, _id):
-        url = Article.get_url_by_id(_id)
+        url = self.post_connection.get_url_by_id(_id)
         return url
