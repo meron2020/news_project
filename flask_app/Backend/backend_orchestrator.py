@@ -1,5 +1,5 @@
 import threading
-from webscrapers_orchestrator import WebscrapersOrchestrator
+from flask_app.Backend.webscrapers_orchestrator import WebscrapersOrchestrator
 from flask_app.Backend.Clustering.Graphs.networkx_graph import GraphConnections
 
 
